@@ -40,22 +40,27 @@ finalBoard([
 
 start :-
   mediumBoard(X),
-  printBoard(X).
+  displayGame(X).
 
-printBoard(T) :-
+displayGame(T) :-
   nl,
   write('    0   1   2   3   4   5   6   7   8   9'),
-  nl,
-  write('   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _'),
+  printSeparation,
   nl,
   tablePrint(T,-1).
 
-tablePrint([]).
+
+printSeparation :-
+  nl,
+  write('  |---|---|---|---|---|---|---|---|---|---|').
+
+tablePrint([], _X).
 tablePrint([L|T],X) :-
   C is X+1,
-   write(C),
-   printList(L),
+  write(C),
+  printList(L),
   write(' |'),
+  printSeparation,
   nl,
   tablePrint(T,C).
 
