@@ -1,4 +1,4 @@
-initialBoard([
+initialBoard([[
 [0,2,0,2,0,2,0,2,0,2],
 [3,0,3,0,3,0,3,0,3,0],
 [0,2,0,2,0,2,0,2,0,2],
@@ -8,7 +8,7 @@ initialBoard([
 [0,2,0,2,0,2,0,2,0,2],
 [3,0,3,0,3,0,3,0,3,0],
 [0,2,0,2,0,2,0,2,0,2],
-[3,0,3,0,3,0,3,0,3,0]
+[3,0,3,0,3,0,3,0,3,0]],1
 ]).
 
 
@@ -39,14 +39,11 @@ finalBoard([
 ]).
 
 start :-
-  finalBoard(X),
-  player(A),
-  displayGame(X, A).
+  initialBoard(X),
+  displayGame(X).
 
-player(Y) :-
-  Y is 1.
-
-displayGame(T, B) :-
+displayGame([]).
+displayGame([T|B]) :-
   nl,
   write('           M A D  B I S H O P S          '),
   nl, nl,
