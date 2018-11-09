@@ -13,13 +13,17 @@ gameState([[
 ]).
 
 start :-
-  gameState(X),
-  displayGame(X),
-  [H|T] = X,
-  getPiece(H,0,1,Y),
-  write(Y).
-  % H is the table, T is the player %,
-  % verifyPlaysTable(H).
+    gameState(X),
+    displayGame(X),
+    [H|T] = X,
+    getPiece(H,0,1,Y),
+    write(Y),
+    betweenBoard(2,1),
+    nl,
+    write('it went through').
+    
+    % H is the table, T is the player %,
+    % verifyPlaysTable(H).
 
 verifyPlaysTable([]).
 verifyPlaysTable([L|T]) :-
@@ -41,4 +45,7 @@ getPiece(Board, Row, Column, Value):-
     nth0(Row, Board, HelpRow),
     nth0(Column, HelpRow, Value).
 
-% betweenBoard(Board,)
+betweenBoard(X, Y):-
+        between(0, 9, X) , between(0,9,Y).
+        
+
