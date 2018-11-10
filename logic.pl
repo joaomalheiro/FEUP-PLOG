@@ -16,7 +16,7 @@ start :-
     gameState(X),
     displayGame(X),
     [H|T] = X,
-    validPlay(X,1,0,0,1).
+    validPlay(X,1,0,2,1).
         
     % H is the table, T is the player %,
     % verifyPlaysTable(H).
@@ -37,13 +37,28 @@ verifyPlaysCell(X):-
     write('. ').
 
 validKill(State,FromX,FromY, ToX, ToY):-
-    %checkIfFinished(FromX,FromY,ToX,ToY),
+    checkPieces(State,FromX,FromY,ToX,ToY),
+    isDiagonal(FromX,FromY,ToX,ToY),
+    emptySpaces(State,FromX,FromY,ToX,ToY).
+
+emptySpaces(State, FromX, FromY, ToX, ToY):-
+    [B|P] = State,
     DirX is sign(ToX - FromX),
     DirY is sign(ToY - FromY),
     X2 is FromX+DirX,
-    Y2 is FromY+DirY.
-    %validKill(State, X2, Y2, ToX, ToY).
+    Y2 is FromY+DirY,
+    emptySpacesAux(B,X2, Y2, ToX, ToY, DirX, DirY).
 
+emptySpacesAux(_Board, X, Y, X, Y, _DirX, _DirY).
+emptySpacesAux(Board,FromX, FromY, ToX, ToY, DirX, DirY):-
+    X2 is FromX+DirX,
+    Y2 is FromY+DirY,
+    getPiece(Board,X2,Y2,Piece),
+    Piece =:= 0,
+    emptySpacesAux(Board,X2,Y2,ToX,ToY,DirX,DirY).
+   
+isDiagonal(FromX, FromY, ToX, ToY):-
+    abs(ToX - FromX) =:= abs(ToY - FromY).
 
 checkPieces(State,FromX,FromY,ToX, ToY):-
     [B|P] = State,
@@ -54,14 +69,9 @@ checkPieces(State,FromX,FromY,ToX, ToY):-
         P =:= 2 -> (getPiece(B,ToX, ToY, DestinyPiece) , DestinyPiece == 3, getPiece(B, FromX, FromY, PlayerPiece) , PlayerPiece == 2)
     )).
 
-checkIfFinished(FromX,FromY,ToX,ToY):-
-    not(FromX==ToX);
-    not(FromY==ToY).
-
 validPlay(State,FromX, FromY, ToX, ToY):-
     betweenBoard(FromX,FromY),
     betweenBoard(ToX,ToY),
-    checkPieces(State,FromX,FromY, ToX, ToY),
     validKill(State,FromX,FromY, ToX, ToY),
     nl.
 
