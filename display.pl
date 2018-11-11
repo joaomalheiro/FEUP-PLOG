@@ -38,6 +38,7 @@ printCell(X) :-
   printSymbol(X,S),
   write(S).
 
-  printSymbol(0,S) :- S=' '.
-  printSymbol(2,S) :- S='A'.
-  printSymbol(3,S) :- S='B'.
+printSymbol(0,S) :- S=' '.
+printSymbol(1,S) :- S=' '.
+printSymbol(2,S) :- S='A'.
+printSymbol(3,S) :- S='B'.
