@@ -22,9 +22,9 @@ finalBoard([[
 [1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
-[0,1,0,1,0,1,0,3,0,1],
+[0,1,0,1,0,3,0,3,0,1],
 [1,0,1,0,1,0,1,0,1,0]],
-1
+2
 ]).
 
 
@@ -41,8 +41,8 @@ validPlay(State,FromX, FromY, ToX, ToY):-
     betweenBoard(FromX,FromY),
     betweenBoard(ToX,ToY),
     checkPlayerPiece(State,FromX,FromY),
-    validKill(State,FromX,FromY, ToX, ToY).
-    %validEngage(State,FromX,FromY,ToX, ToY).
+    validKill(State,FromX,FromY, ToX, ToY);
+    validEngage(State,FromX,FromY,ToX, ToY).
 
 validKill(State,FromX,FromY, ToX, ToY):-
     checkDestinyTarget(State,ToX,ToY),
@@ -50,10 +50,11 @@ validKill(State,FromX,FromY, ToX, ToY):-
     emptySpaces(State,FromX,FromY,ToX,ToY).
 
 validEngage(State,FromX,FromY,ToX,ToY):-
+    checkPlayerPiece(State,FromX,FromY),
     checkDestinyEmpty(State,ToX,ToY),
     isDiagonal(FromX,FromY,ToX,ToY),
-    emptySpaces(FromX,FromY,ToX,ToY),
-    validKill(State,ToX,ToY,X,Y).
+    emptySpaces(State,FromX,FromY,ToX,ToY),
+    validKill(State,ToX,ToY,_X,_Y).
 
 emptySpaces(State, FromX, FromY, ToX, ToY):-
     [B|P] = State,
