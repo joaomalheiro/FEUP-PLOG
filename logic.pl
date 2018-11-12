@@ -12,7 +12,7 @@ starting_board([
 ]) :- !.
 
 % example of a board in a terminal state of the game
-finalBoard([
+final_board([
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
@@ -25,7 +25,7 @@ finalBoard([
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
+initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 0, PiecesP2 is 0.
 initial_player(1) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
@@ -35,14 +35,20 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 start :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B, Player),
-    valid_moves(B, Player, PossibleMoves),
-    write(PossibleMoves).
-    % [H|T] = X,
-    %replaceInTable(H, 1,2, 6, B2),
-    %write(B2).
 
+    game_over(board(B,PiecesP1,PiecesP2),Winner),
+    write(Winner).
+
+    %valid_moves(B, Player, PossibleMoves),
+    %write(PossibleMoves).
+    % [H|T] = X,
         
     % H is the table, T is the player %,
+game_over(board(B,PiecesP1,PiecesP2), Winner):-
+    (
+        PiecesP1 =:= 0 -> Winner is 2 ; PiecesP2 =:= 0 -> Winner is 1 ; Winner is 0 
+    ).
+
 
 valid_moves(Board, Player, ListMoves):-
     findall([FromX,FromY,ToX,ToY],validPlay(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListMoves).
