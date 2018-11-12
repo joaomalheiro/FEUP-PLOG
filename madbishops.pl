@@ -4,4 +4,5 @@
 :- use_module(library(lists)).
 :- use_module(library(between)).
 
-mb:-mainMenu.
+play:-mainMenu,
+start.

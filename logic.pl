@@ -34,7 +34,6 @@ start :-
     [H|T] = X,
     findall([FromX,FromY,ToX,ToY],validPlay(X,FromX,FromY,ToX,ToY),Ali),
     write(Ali).
-        
     % H is the table, T is the player %,
 
 validPlay(State,FromX, FromY, ToX, ToY):-
@@ -108,4 +107,22 @@ getPiece(Board, Row, Column, Value):-
 betweenBoard(X, Y):-
         between(0, 9, X) , between(0,9,Y).
         
+replaceInLine([_|T], 0, V, [V|T]).
+replaceInLine([H|T], X, V, [H|R]) :-
+    X > 0,
+    X1 is X - 1,
+    replaceInLine(T, X1, V, R).
+
+replaceInTable([_|T], X, 0, V, T).
+replaceInTable([H|T], X, Y, V, [U|R]):-
+    nl,
+    Y > 0,
+    Y1 is Y-1,
+    ((
+        Y1=:=0 -> replaceInLine(H,X,V,U),  replaceInTable(T,X,Y1,V,R)
+    );
+    (
+        Y1\=0 -> U=H,  replaceInTable(T,X,Y1,V,R)
+    )).
+
 

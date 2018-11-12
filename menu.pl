@@ -11,6 +11,5 @@ mainMenu:-
   nl, nl,
   write('Input: '),
   read(Input),
-  nl, nl,
+  nl, nl.
   % manage input %
-  start.
