@@ -13,3 +13,21 @@ mainMenu:-
   read(Input),
   nl, nl.
   % manage input %
+
+
+  getMove(point(FromX,FromY), point(ToX,ToY)):-
+    write('From X: '),
+    read(Input), 
+    FromX is Input,
+    write('From Y: '),
+    read(Input),
+    FromY is Input,
+    write('To X: '),
+    read(Input),
+    ToX is Input,
+    write('To X: '),
+    read(Input),
+    ToY is Input.
+
+
+

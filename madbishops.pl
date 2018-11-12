@@ -5,4 +5,4 @@
 :- use_module(library(between)).
 
 play:-mainMenu,
-start.
+    start.
