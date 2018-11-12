@@ -153,7 +153,9 @@ update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1
     (
         Player =:= 1 -> NewPlayer is 2 ; NewPlayer is 1
     ), nl,
-    displayGame(NewB,NewPlayer).
+    displayGame(NewB,NewPlayer),
+    update(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), state(board(B2, PieceP1, PieceP2), Player2)).
+
 
 move(move(point(FromX, FromY),point(ToX,ToY)), Board, NewBoard):-
     getPiece(Board,point(FromX, FromY), Piece),
