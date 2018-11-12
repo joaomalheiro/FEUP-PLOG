@@ -17,17 +17,17 @@ mainMenu:-
 
   getMove(point(FromX,FromY), point(ToX,ToY)):-
     write('From X: '),
-    read(Input), 
-    FromX is Input,
+    read(Input1), 
+    FromX is Input1,
     write('From Y: '),
-    read(Input),
-    FromY is Input,
+    read(Input2),
+    FromY is Input2,
     write('To X: '),
-    read(Input),
-    ToX is Input,
+    read(Input3),
+    ToX is Input3,
     write('To X: '),
-    read(Input),
-    ToY is Input.
+    read(Input4),
+    ToY is Input4.
 
 
 

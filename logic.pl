@@ -115,11 +115,11 @@ betweenBoard(point(X, Y)):-
         between(0, 9, X) , between(0,9,Y).
 
 update(state(board(B, PiecesP1, PiecesP2),Player), newState(newBoard(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
-    getMove(point(FromX,FromY), point(ToX,ToY)).
-    % getMove(point(point(FromX,FromY)),point(point(ToX,ToY)))
-    % validPlay()
-
-
+    getMove(point(FromX,FromY), point(ToX,ToY)),
+    [FromX,FromY, ToX,ToY] = Move,
+    valid_moves(B, Player, PossibleMoves),
+    write(PossibleMoves),
+    member(Move,PossibleMoves).
 
 
 same(L1,L2):-
