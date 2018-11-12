@@ -1,4 +1,4 @@
-gameState([[
+starting_board([
 [0,2,0,2,0,2,0,2,0,2],
 [3,0,3,0,3,0,3,0,3,0],
 [0,2,0,2,0,2,0,2,0,2],
@@ -8,12 +8,11 @@ gameState([[
 [0,2,0,2,0,2,0,2,0,2],
 [3,0,3,0,3,0,3,0,3,0],
 [0,2,0,2,0,2,0,2,0,2],
-[3,0,3,0,3,0,3,0,3,0]],
-1
-]).
+[3,0,3,0,3,0,3,0,3,0]
+]) :- !.
 
 % example of a board in a terminal state of the game
-finalBoard([[
+finalBoard([
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
@@ -23,84 +22,87 @@ finalBoard([[
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,3,0,3,0,1],
-[1,0,1,0,1,0,1,0,1,0]],
-2
-]).
+[1,0,1,0,1,0,1,0,1,0]
+]) :- !.
 
+initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
+initial_player(1) :- !.
+
+initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
+    initial_board(board(B,PiecesP1,PiecesP2)),
+    initial_player(Player).
 
 start :-
-    finalBoard(X),
-    displayGame(X),
-    [H|T] = X,
-    findall([FromX,FromY,ToX,ToY],validPlay(X,FromX,FromY,ToX,ToY),Ali),
-    write(Ali),
-    replaceInTable(H, 1,2, 6, B2),
-    write(B2).
+    initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
+    displayGame(B, Player).
+    % [H|T] = X,
+    %replaceInTable(H, 1,2, 6, B2),
+    %write(B2).
+
         
     % H is the table, T is the player %,
 
-validPlay(State,FromX, FromY, ToX, ToY):-
-    betweenBoard(FromX,FromY),
-    betweenBoard(ToX,ToY),
-    checkPlayerPiece(State,FromX,FromY),
-    validKill(State,FromX,FromY, ToX, ToY);
-    validEngage(State,FromX,FromY,ToX, ToY).
+valid_moves(Board, Player, ListMoves):-
+    findall([point(FromX,FromY),point(ToX,ToY)],validPlay(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListMoves).
 
-validKill(State,FromX,FromY, ToX, ToY):-
-    checkDestinyTarget(State,ToX,ToY),
-    isDiagonal(FromX,FromY,ToX,ToY),
-    emptySpaces(State,FromX,FromY,ToX,ToY).
+validPlay(Board, Player, PFrom, PTo):-
+    betweenBoard(PFrom),
+    betweenBoard(PTo),
+    checkPlayerPiece(Board, Player,PFrom),
+    validKill(Board, Player,PFrom,PTo);
+    validEngage(Board, Player, PFrom,PTo).
 
-validEngage(State,FromX,FromY,ToX,ToY):-
-    checkPlayerPiece(State,FromX,FromY),
-    checkDestinyEmpty(State,ToX,ToY),
-    isDiagonal(FromX,FromY,ToX,ToY),
-    emptySpaces(State,FromX,FromY,ToX,ToY),
-    validKill(State,ToX,ToY,_X,_Y).
+validKill(Board, Player, PFrom, PTo):-
+    checkDestinyTarget(Board,Player, PTo),
+    isDiagonal(PFrom,PTo),
+    emptySpaces(Board,PFrom,PTo).
 
-emptySpaces(State, FromX, FromY, ToX, ToY):-
-    [B|P] = State,
+validEngage(Board, Player, PFrom, PTo):-
+    checkPlayerPiece(Board,Player,PFrom),
+    checkDestinyEmpty(Board,PTo),
+    isDiagonal(PFrom,PTo),
+    emptySpaces(Board,PFrom,PTo),
+    validKill(Board,Player,PTo,_X,_Y).
+
+emptySpaces(Board, point(FromX,FromY), point(ToX,ToY)):-
     DirX is sign(ToX - FromX),
     DirY is sign(ToY - FromY),
     X2 is FromX+DirX,
     Y2 is FromY+DirY,
-    emptySpacesAux(B,X2, Y2, ToX, ToY, DirX, DirY).
+    emptySpacesAux(Board, X2, Y2, point(ToX,ToY), DirX, DirY).
 
-emptySpacesAux(_Board, X, Y, X, Y, _DirX, _DirY).
-emptySpacesAux(Board,FromX, FromY, ToX, ToY, DirX, DirY):-
+emptySpacesAux(_Board, point(X,Y), point(X, Y), _DirX, _DirY).
+emptySpacesAux(Board,point(FromX,FromY), point(ToX,ToY), DirX, DirY):-
     X2 is FromX+DirX,
     Y2 is FromY+DirY,
-    getPiece(Board,FromX,FromY,Piece),
+    getPiece(Board,point(FromX,FromY),Piece),
     isEmptyPiece(Piece),
-    emptySpacesAux(Board,X2,Y2,ToX,ToY,DirX,DirY).
+    emptySpacesAux(Board,point(X2,Y2),point(ToX,ToY),DirX,DirY).
 
 isEmptyPiece(Piece):-
     Piece =:= 1.
 
-isDiagonal(FromX, FromY, ToX, ToY):-
+isDiagonal(point(FromX,FromY), point(ToX,ToY)):-
     abs(ToX - FromX) =:= abs(ToY - FromY).
 
-checkPlayerPiece(State,FromX,FromY):-
-    [B|P] = State,
+checkPlayerPiece(Board,Player,point(FromX,FromY)):-
     ((
-        P =:= 1 -> getPiece(B, FromX, FromY, PlayerPiece) , PlayerPiece == 3
+        Player =:= 1 -> getPiece(Board, point(FromX,FromY), PlayerPiece) , PlayerPiece == 3
     );
     (
-        P =:= 2 -> getPiece(B, FromX, FromY, PlayerPiece) , PlayerPiece == 2
+        Player =:= 2 -> getPiece(Board, point(FromX,FromY), PlayerPiece) , PlayerPiece == 2
     )).
 
-checkDestinyEmpty(State, ToX, ToY):-
-    [B|P] = State,
-    getPiece(B,ToX,ToY,Piece),
+checkDestinyEmpty(Board, point(ToX,ToY)):-
+    getPiece(Board,point(ToX,ToY),Piece),
     isEmptyPiece(Piece).
 
-checkDestinyTarget(State, ToX, ToY):-
-    [B|P] = State,
+checkDestinyTarget(Board,Player, point(ToX,ToY)):-
     ((
-        P =:= 1 -> (getPiece(B,ToX, ToY, DestinyPiece) , DestinyPiece =:= 2)
+        Player =:= 1 -> (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 2)
     );
     (
-        P =:= 2 -> (getPiece(B,ToX, ToY, DestinyPiece) , DestinyPiece =:= 3)
+        Player =:= 2 -> (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 3)
     )).
 
 getPiece(Board, Row, Column, Value):-
@@ -109,6 +111,13 @@ getPiece(Board, Row, Column, Value):-
 
 betweenBoard(X, Y):-
         between(0, 9, X) , between(0,9,Y).
+
+% update(state(board(B, PiecesP1, PiecesP2),Player), NewState(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
+    % getMove(point(point(FromX,FromY)),point(point(ToX,ToY)))
+    % validPlay()
+
+
+
 
 same(L1,L2):-
     append(L1,[],L2).        
@@ -125,7 +134,6 @@ replaceInTable([H|T], X, Y, V, [U|R]):-
     same(T,R).
     
 replaceInTable([H|T], X, Y, V, [U|R]):-
-nl,
     same(H,U),
     Y1 is Y-1,
     replaceInTable(T,X,Y1,V,R).

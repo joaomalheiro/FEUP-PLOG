@@ -1,5 +1,5 @@
-displayGame([]).
-displayGame([T|P]) :-
+displayGame([], P).
+displayGame(T,P) :-
   write('PLAYER TURN: '),
   ((
     P =:= 1 -> write('BLUE')
@@ -14,7 +14,7 @@ displayGame([T|P]) :-
   tablePrint(T,-1).
 
 
-printSeparation :-
+printSeparation :- 
   nl,
   write('  |---|---|---|---|---|---|---|---|---|---|').
 
