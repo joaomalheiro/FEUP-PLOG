@@ -35,18 +35,14 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 start :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B, Player),
-    valid_moves(B, Player, PossibleMoves),
-    %write(PossibleMoves).
-    % [H|T] = X,
-    update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)).
+
+    % update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)).
     %write(B2).
 
     %game_over(board(B,PiecesP1,PiecesP2),Winner),
     %write(Winner).
 
-    %valid_moves(B, Player, PossibleMoves),
-    %write(PossibleMoves).
-    % [H|T] = X,
+    choose_move(B,Player, 1, Move), write(Move).
         
     % H is the table, T is the player %,
 game_over(board(B,PiecesP1,PiecesP2), Winner):-
@@ -124,6 +120,27 @@ getPiece(Board, point(Row, Column), Value):-
 
 betweenBoard(point(X, Y)):-
         between(0, 9, X) , between(0,9,Y).
+
+choose_move(B,Player, Level, Move):-
+    (
+        Level =:= 1 -> aiEasy(B, Player,Move)
+    ).
+    
+aiEasy(B, Player, Move):-
+    valid_moves(B, Player, ListMoves),
+    length(ListMoves, _ListSize),
+    generateRandomNum(0,_ListSize,RandomNum),
+    nth0(RandomNum, ListMoves, Movement),
+    listToMove(Movement,Move).
+
+listToMove(A, move(point(FromX,FromY),point(ToX,ToY))):-
+    nth0(0,A,FromX),
+    nth0(1,A,FromY),
+    nth0(2,A,ToX), 
+    nth0(3,A,ToY). 
+    
+generateRandomNum(D,U,RandomNum):-
+    random(D, U, RandomNum).
 
 update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
     getMove(point(FromX,FromY), point(ToX,ToY)),
