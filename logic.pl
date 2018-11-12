@@ -138,7 +138,7 @@ update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1
     displayGame(NewB,Player).
 
 move(move(point(FromX, FromY),point(ToX,ToY)), Board, NewBoard):-
-    getPiece(Board,point(ToX, ToY), Piece),
+    getPiece(Board,point(FromX, FromY), Piece),
     replaceInTable(Board,FromX,FromY,1,TempBoard),
     replaceInTable(TempBoard,ToX,ToY,Piece, NewBoard).
 
@@ -147,17 +147,17 @@ same(L1,L2):-
     append(L1,[],L2).        
         
 replaceInLine([_|T], 0, V, [V|T]).
-replaceInLine([H|T], X, V, [H|R]) :-
-    X > 0,
-    X1 is X - 1,
-    replaceInLine(T, X1, V, R).
+replaceInLine([H|T], Y, V, [H|R]) :-
+    Y > 0,
+    Y1 is Y - 1,
+    replaceInLine(T, Y1, V, R).
 
 replaceInTable([H|T], X, Y, V, [U|R]):-
-    Y is 0,
-    replaceInLine(H,X,V,U),
+    X is 0,
+    replaceInLine(H,Y,V,U),
     same(T,R).
     
 replaceInTable([H|T], X, Y, V, [U|R]):-
     same(H,U),
-    Y1 is Y-1,
-    replaceInTable(T,X,Y1,V,R).
+    X1 is X-1,
+    replaceInTable(T,X1,Y,V,R).

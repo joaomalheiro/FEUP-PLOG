@@ -16,16 +16,16 @@ mainMenu:-
 
 
   getMove(point(FromX,FromY), point(ToX,ToY)):-
-    write('From X: '),
+    write('From Col: '),
     read(Input1), 
     FromX is Input1,
-    write('From Y: '),
+    write('From Row: '),
     read(Input2),
     FromY is Input2,
-    write('To X: '),
+    write('To Col: '),
     read(Input3),
     ToX is Input3,
-    write('To X: '),
+    write('To Row: '),
     read(Input4),
     ToY is Input4.
 

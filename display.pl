@@ -40,5 +40,5 @@ printCell(X) :-
 
 printSymbol(0,S) :- S='.'.
 printSymbol(1,S) :- S=' '.
-printSymbol(2,S) :- S='A'.
+printSymbol(2,S) :- S='V'.
 printSymbol(3,S) :- S='B'.
