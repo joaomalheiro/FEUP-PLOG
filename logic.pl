@@ -33,17 +33,20 @@ start :-
     displayGame(X),
     [H|T] = X,
     findall([FromX,FromY,ToX,ToY],validPlay(X,FromX,FromY,ToX,ToY),Ali),
-    write(Ali).
+    write(Ali),
+    replaceInTable(H, 1,2, 6, B2),
+    write(B2).
+        
     % H is the table, T is the player %,
 
 validPlay(State,FromX, FromY, ToX, ToY):-
     betweenBoard(FromX,FromY),
     betweenBoard(ToX,ToY),
+    checkPlayerPiece(State,FromX,FromY),
     validKill(State,FromX,FromY, ToX, ToY);
     validEngage(State,FromX,FromY,ToX, ToY).
 
 validKill(State,FromX,FromY, ToX, ToY):-
-    checkPlayerPiece(State,FromX,FromY),
     checkDestinyTarget(State,ToX,ToY),
     isDiagonal(FromX,FromY,ToX,ToY),
     emptySpaces(State,FromX,FromY,ToX,ToY).
@@ -106,6 +109,9 @@ getPiece(Board, Row, Column, Value):-
 
 betweenBoard(X, Y):-
         between(0, 9, X) , between(0,9,Y).
+
+same(L1,L2):-
+    append(L1,[],L2).        
         
 replaceInLine([_|T], 0, V, [V|T]).
 replaceInLine([H|T], X, V, [H|R]) :-
@@ -113,16 +119,13 @@ replaceInLine([H|T], X, V, [H|R]) :-
     X1 is X - 1,
     replaceInLine(T, X1, V, R).
 
-replaceInTable([_|T], X, 0, V, T).
 replaceInTable([H|T], X, Y, V, [U|R]):-
-    nl,
-    Y > 0,
+    Y is 0,
+    replaceInLine(H,X,V,U),
+    same(T,R).
+    
+replaceInTable([H|T], X, Y, V, [U|R]):-
+nl,
+    same(H,U),
     Y1 is Y-1,
-    ((
-        Y1=:=0 -> replaceInLine(H,X,V,U),  replaceInTable(T,X,Y1,V,R)
-    );
-    (
-        Y1\=0 -> U=H,  replaceInTable(T,X,Y1,V,R)
-    )).
-
-
+    replaceInTable(T,X,Y1,V,R).
