@@ -34,7 +34,9 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 
 start :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
-    displayGame(B, Player).
+    displayGame(B, Player),
+    valid_moves(B, Player, PossibleMoves),
+    write(PossibleMoves).
     % [H|T] = X,
     %replaceInTable(H, 1,2, 6, B2),
     %write(B2).
@@ -43,7 +45,7 @@ start :-
     % H is the table, T is the player %,
 
 valid_moves(Board, Player, ListMoves):-
-    findall([point(FromX,FromY),point(ToX,ToY)],validPlay(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListMoves).
+    findall([FromX,FromY,ToX,ToY],validPlay(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListMoves).
 
 validPlay(Board, Player, PFrom, PTo):-
     betweenBoard(PFrom),
@@ -69,7 +71,7 @@ emptySpaces(Board, point(FromX,FromY), point(ToX,ToY)):-
     DirY is sign(ToY - FromY),
     X2 is FromX+DirX,
     Y2 is FromY+DirY,
-    emptySpacesAux(Board, X2, Y2, point(ToX,ToY), DirX, DirY).
+    emptySpacesAux(Board, point(X2, Y2), point(ToX,ToY), DirX, DirY).
 
 emptySpacesAux(_Board, point(X,Y), point(X, Y), _DirX, _DirY).
 emptySpacesAux(Board,point(FromX,FromY), point(ToX,ToY), DirX, DirY):-
@@ -105,11 +107,11 @@ checkDestinyTarget(Board,Player, point(ToX,ToY)):-
         Player =:= 2 -> (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 3)
     )).
 
-getPiece(Board, Row, Column, Value):-
+getPiece(Board, point(Row, Column), Value):-
     nth0(Row, Board, HelpRow),
     nth0(Column, HelpRow, Value).
 
-betweenBoard(X, Y):-
+betweenBoard(point(X, Y)):-
         between(0, 9, X) , between(0,9,Y).
 
 % update(state(board(B, PiecesP1, PiecesP2),Player), NewState(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
