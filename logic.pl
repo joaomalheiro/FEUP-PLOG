@@ -38,11 +38,11 @@ start :-
     valid_moves(B, Player, PossibleMoves),
     %write(PossibleMoves).
     % [H|T] = X,
-    update(state(board(B, PiecesP1, PiecesP2),Player), newState(newBoard(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)).
+    update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)).
     %write(B2).
 
-    game_over(board(B,PiecesP1,PiecesP2),Winner),
-    write(Winner).
+    %game_over(board(B,PiecesP1,PiecesP2),Winner),
+    %write(Winner).
 
     %valid_moves(B, Player, PossibleMoves),
     %write(PossibleMoves).
@@ -125,9 +125,16 @@ getPiece(Board, point(Row, Column), Value):-
 betweenBoard(point(X, Y)):-
         between(0, 9, X) , between(0,9,Y).
 
-update(state(board(B, PiecesP1, PiecesP2),Player), newState(newBoard(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
+update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
     getMove(point(FromX,FromY), point(ToX,ToY)),
-    validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)).
+    validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)),
+    move(move(point(FromX,FromY), point(ToX,ToY)), B, NewBoard),
+    displayGame(NewBoard,Player).
+
+move(move(point(FromX, FromY),point(ToX,ToY)), Board, NewBoard):-
+    getPiece(Board,point(ToX, ToY), Piece),
+    replaceInTable(Board,FromX,FromY,1,TempBoard),
+    replaceInTable(TempBoard,ToX,ToY,Piece, NewBoard).
 
 
 same(L1,L2):-
