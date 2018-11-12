@@ -39,11 +39,11 @@ start :-
 validPlay(State,FromX, FromY, ToX, ToY):-
     betweenBoard(FromX,FromY),
     betweenBoard(ToX,ToY),
-    checkPlayerPiece(State,FromX,FromY),
     validKill(State,FromX,FromY, ToX, ToY);
     validEngage(State,FromX,FromY,ToX, ToY).
 
 validKill(State,FromX,FromY, ToX, ToY):-
+    checkPlayerPiece(State,FromX,FromY),
     checkDestinyTarget(State,ToX,ToY),
     isDiagonal(FromX,FromY,ToX,ToY),
     emptySpaces(State,FromX,FromY,ToX,ToY).
