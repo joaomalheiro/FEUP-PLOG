@@ -35,16 +35,19 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 start :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B, Player),
-
     % update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)).
-    %write(B2).
-
+    %write(B2),
     %game_over(board(B,PiecesP1,PiecesP2),Winner),
     %write(Winner).
+    %choose_move(B,Player, 1, Move), write(Move).
+    elLoop(state(board(B,PiecesP1,PiecesP2),Player)).
 
-    choose_move(B,Player, 1, Move), write(Move).
-        
-    % H is the table, T is the player %,
+elLoop(state(board(B,PiecesP1,PiecesP2),Player)):-
+    game_over(board(B,PiecesP1,PiecesP2),Winner),
+    (
+        Winner =:= 0 -> update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)) ,elLoop(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)); write('já ganhoooooou')
+    ).
+
 game_over(board(B,PiecesP1,PiecesP2), Winner):-
     (
         PiecesP1 =:= 0 -> Winner is 2 ; PiecesP2 =:= 0 -> Winner is 1 ; Winner is 0 
@@ -153,8 +156,7 @@ update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1
     (
         Player =:= 1 -> NewPlayer is 2 ; NewPlayer is 1
     ), nl,
-    displayGame(NewB,NewPlayer),
-    update(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), state(board(B2, PieceP1, PieceP2), Player2)).
+    displayGame(NewB,NewPlayer).
 
 
 move(move(point(FromX, FromY),point(ToX,ToY)), Board, NewBoard):-
