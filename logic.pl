@@ -25,7 +25,7 @@ final_board([
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 0, PiecesP2 is 0.
+initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
 initial_player(1) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
@@ -128,8 +128,14 @@ betweenBoard(point(X, Y)):-
 update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
     getMove(point(FromX,FromY), point(ToX,ToY)),
     validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)),
-    move(move(point(FromX,FromY), point(ToX,ToY)), B, NewBoard),
-    displayGame(NewBoard,Player).
+    %write('PiecesP1 : '), write(PiecesP1),
+    (
+        checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 2 -> (NewPiecesP1 is (PiecesP1-1), NewPiecesP2 is PiecesP2) ; 
+        checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1)
+    ),
+    move(move(point(FromX,FromY), point(ToX,ToY)), B, NewB),
+    write(NewPiecesP1),
+    displayGame(NewB,Player).
 
 move(move(point(FromX, FromY),point(ToX,ToY)), Board, NewBoard):-
     getPiece(Board,point(ToX, ToY), Piece),
