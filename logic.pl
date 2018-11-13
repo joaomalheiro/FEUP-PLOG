@@ -25,8 +25,8 @@ final_board([
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
-initial_player(1) :- !.
+initial_board(board(B, PiecesP1, PiecesP2)) :- final_board(B), PiecesP1 is 25, PiecesP2 is 25.
+initial_player(2) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
     initial_board(board(B,PiecesP1,PiecesP2)),
@@ -74,7 +74,7 @@ validEngage(Board, Player, PFrom, PTo):-
     checkDestinyEmpty(Board,PTo),
     isDiagonal(PFrom,PTo),
     emptySpaces(Board,PFrom,PTo),
-    validKill(Board,Player,PTo,_X,_Y).
+    validKill(Board,Player,PTo,point(X,Y)).
 
 emptySpaces(Board, point(FromX,FromY), point(ToX,ToY)):-
     DirX is sign(ToX - FromX),
