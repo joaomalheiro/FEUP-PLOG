@@ -148,10 +148,11 @@ generateRandomNum(D,U,RandomNum):-
 update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
     getMove(point(FromX,FromY), point(ToX,ToY)),
     validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)),
-    (
-        checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 2 -> (NewPiecesP1 is (PiecesP1-1), NewPiecesP2 is PiecesP2) ; 
-        checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1)
-    ),
+    %(
+    %    checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 2 -> (NewPiecesP1 is (PiecesP1-1), NewPiecesP2 is PiecesP2) ; 
+    %    checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1)
+    %),
+    NewPiecesP1 is 25, NewPiecesP2 is 25,
     move(move(point(FromX,FromY), point(ToX,ToY)), B, NewB),
     (
         Player =:= 1 -> NewPlayer is 2 ; NewPlayer is 1
