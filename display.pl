@@ -9,7 +9,7 @@ displayGame(T,Pieces1,Pieces2,P) :-
   )),
   nl,nl,
   write('RED BISHOPS: '), write(Pieces2),nl,nl,
-  write('RED BISHOPS: '), write(Pieces2),nl,nl,
+  write('BLUE BISHOPS: '), write(Pieces1),nl,nl,
   write('    0   1   2   3   4   5   6   7   8   9'),
   printSeparation,
   nl,
