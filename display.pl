@@ -1,5 +1,5 @@
-displayGame([], P).
-displayGame(T,P) :-
+displayGame([],Pieces1,Pieces2, P).
+displayGame(T,Pieces1,Pieces2,P) :-
   write('PLAYER TURN: '),
   ((
     P =:= 1 -> write('BLUE')
@@ -8,6 +8,8 @@ displayGame(T,P) :-
     P =:= 2 -> write('RED')
   )),
   nl,nl,
+  write('RED BISHOPS: '), write(Pieces2),nl,nl,
+  write('RED BISHOPS: '), write(Pieces2),nl,nl,
   write('    0   1   2   3   4   5   6   7   8   9'),
   printSeparation,
   nl,
