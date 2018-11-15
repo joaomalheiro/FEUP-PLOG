@@ -16,6 +16,11 @@ displayGame(T,Pieces1,Pieces2,P) :-
   tablePrint(T,-1).
 
 
+printLine :-
+nl,
+write('-----------------------------------------'),
+nl.
+
 printSeparation :- 
   nl,
   write('  |---|---|---|---|---|---|---|---|---|---|').
