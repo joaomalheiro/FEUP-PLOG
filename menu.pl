@@ -1,47 +1,33 @@
+
 mainMenu:-
   nl,
   write('           M A D  B I S H O P S          '),
-  printLine,
-  write('1 - Human vs Human'),
   nl,
-  write('2 - Human vs Bot'),
+  write('-----------------------------------------'),
   nl,
-  write('3 - Quit'),
-  printLine,
+  write('1 - Play'),
   nl,
-  write('Input: '),
-  getInput(Input),
+  write('-----------------------------------------'),
   nl, nl,
-  manageInput(Input).
-  
-
-manageInput(Input):-
-  Input =:= 1 -> start(1);
-  Input =:= 2 -> start(2);
-  Input =:= 3 -> true.
-
-getInput(Input):-
+  write('Input: '),
   read(Input),
-  testInput(Input); (write('\nInvalid Input. Try again: \n'), getInput(Input)).
-
-testInput(Input):-
-  between(1,3,Input),
-  integer(Input).  
+  nl, nl.
+  % manage input %
 
 
-getMove(point(FromX,FromY), point(ToX,ToY)):-
-  write('From Row: '),
-  getInput(Input1), 
-  FromX is Input1,
-  write('From Col: '),
-  getInput(Input2),
-  FromY is Input2,
-  write('To Row: '),
-  getInput(Input3),
-  ToX is Input3,
-  write('To Col: '),
-  getInput(Input4),
-  ToY is Input4.
+  getMove(point(FromX,FromY), point(ToX,ToY)):-
+    write('From Row: '),
+    read(Input1), 
+    FromX is Input1,
+    write('From Col: '),
+    read(Input2),
+    FromY is Input2,
+    write('To Row: '),
+    read(Input3),
+    ToX is Input3,
+    write('To Col: '),
+    read(Input4),
+    ToY is Input4.
 
 
 

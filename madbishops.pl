@@ -5,4 +5,5 @@
 :- use_module(library(between)).
 :- use_module(library(random)).
 
-play:-mainMenu.     
+play:-mainMenu,
+    start.
