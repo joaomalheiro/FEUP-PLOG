@@ -17,11 +17,11 @@ final_board([
 [1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
-[0,1,0,2,0,1,0,1,0,1],
-[1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
-[0,1,0,1,0,3,0,3,0,1],
+[0,1,0,1,0,1,0,1,0,1],
+[1,0,1,0,1,0,2,0,1,0],
+[0,1,0,1,0,3,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
@@ -32,15 +32,11 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
     initial_board(board(B,PiecesP1,PiecesP2)),
     initial_player(Player).
 
-start :-
+start(Mode) :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B,PiecesP1,PiecesP2,Player),
-    % update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)).
-    %write(B2),
-    %game_over(board(B,PiecesP1,PiecesP2),Winner),
-    %write(Winner).
-    %choose_move(B,Player, 1, Move), write(Move).
-    elLoop(state(board(B,PiecesP1,PiecesP2),Player)).
+    (Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player)));
+    write('ai').
 
 elLoop(state(board(B,PiecesP1,PiecesP2),Player)):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
@@ -147,7 +143,8 @@ generateRandomNum(D,U,RandomNum):-
 
 update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
     getMove(point(FromX,FromY), point(ToX,ToY)),
-    validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)),
+    (validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)); 
+    (nl, write('Invalid move. Try again\n\n'), getMove(point(FromX,FromY), point(ToX,ToY)))),
     (
         checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 2 -> (NewPiecesP1 is (PiecesP1-1), NewPiecesP2 is PiecesP2); 
         checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1);

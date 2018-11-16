@@ -40,6 +40,11 @@ printCell(X) :-
   printSymbol(X,S),
   write(S).
 
+printLine :-
+nl,
+write('-----------------------------------------'),
+nl.  
+
 printSymbol(0,S) :- S='.'.
 printSymbol(1,S) :- S=' '.
 printSymbol(2,S) :- S='V'.
