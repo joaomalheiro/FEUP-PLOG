@@ -157,12 +157,12 @@ checkDestinyEmpty(Board, point(ToX,ToY)):-
     isEmptyPiece(Piece).
 
 checkDestinyTarget(Board,Player, point(ToX,ToY)):-
-    ((
-        Player =:= 1 -> (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 2)
-    );
-    (
-        Player =:= 2 -> (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 3)
-    )).
+        Player is 1,
+        (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 2).
+
+checkDestinyTarget(Board,Player, point(ToX,ToY)):-
+        Player is 2,
+        (getPiece(Board,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 3). 
 
 getPiece(Board, point(Row, Column), Value):-
     nth0(Row, Board, HelpRow),
@@ -220,9 +220,10 @@ getUserMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point
 
 
 changePlayer(Player, NewPlayer):-
-    (
-        Player =:= 1 -> NewPlayer is 2 ; NewPlayer is 1
-    ).
+    Player is 1, NewPlayer is 2.
+    
+changePlayer(Player, NewPlayer):-
+    Player is 2, NewPlayer is 1.
 
 move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
     getPiece(B,point(FromX, FromY), Piece),
