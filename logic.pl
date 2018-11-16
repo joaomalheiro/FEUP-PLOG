@@ -25,7 +25,7 @@ final_board([
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- final_board(B), PiecesP1 is 1, PiecesP2 is 1.
+initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
 initial_player(2) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
@@ -34,9 +34,10 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 
 start(Mode) :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
-    displayGame(B,PiecesP1,PiecesP2,Player),
-    (Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player)));
-    write('ai').
+    %displayGame(B,PiecesP1,PiecesP2,Player),
+    %(Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player)));
+    %write('ai').
+    aiMedium(state(board(B,PiecesP1,PiecesP2),Player)).
 
 elLoop(state(board(B,PiecesP1,PiecesP2),Player)):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
@@ -49,6 +50,36 @@ game_over(board(B,PiecesP1,PiecesP2), Winner):-
         PiecesP1 =:= 0 -> Winner is 2 ; PiecesP2 =:= 0 -> Winner is 1 ; Winner is 0 
     ).
 
+aiMedium(state(board(B,PiecesP1,PiecesP2),Player)):-
+    findall(Value-FromX-FromY-ToX-ToY,(validPlay(B, Player, point(FromX,FromY),point(ToX,ToY)),
+    move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player),
+    changePlayer(Player,NewPlayer),
+    value(state(board(NewBoard,NewPiecesP1,NewPiecesP2),NewPlayer),Value)),ListValues),
+    write(ListValues),
+    choose_best_move(ListValues, BestMove,-100,move(0,0,0,0)),nl,nl,
+    write(BestMove).
+
+choose_best_move([],BestMove, _CurrBestValue, BestMove).
+choose_best_move([ActualValue-FromX-FromY-ToX-ToY|T],BestMove, CurrBestValue, CurrBestMove):-
+    ActualValue > CurrBestValue ,choose_best_move(T,BestMove,ActualValue,move(FromX,FromY,ToX,ToY)).
+
+choose_best_move([_H|T], BestMove, CurrBestValue,CurrBestMove):-
+    choose_best_move(T, BestMove, CurrBestValue, CurrBestMove).
+
+value(state(board(Board,PiecesP1,PiecesP2),Player),Value):-
+    valueKills(PiecesP1, PiecesP2, Player, AuxValueKills),
+    valueKillable(Board, Player, AuxValueKillable),
+    Value is AuxValueKills - AuxValueKillable.
+
+valueKills(PiecesP1, PiecesP2, Player, Value):-
+    (
+        Player =:= 1 -> Value is PiecesP2*(PiecesP2-PiecesP1); Value is PiecesP1*(PiecesP1-PiecesP2)
+    ).
+
+valueKillable(Board, Player, Value):-
+    findall([FromX,FromY,ToX,ToY],validKill(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListKills),
+    length(ListKills, ListSize),
+    Value is ListSize.
 
 valid_moves(Board, Player, ListMoves):-
     findall([FromX,FromY,ToX,ToY],validPlay(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListMoves).
@@ -61,6 +92,7 @@ validPlay(Board, Player, PFrom, PTo):-
     validEngage(Board, Player, PFrom,PTo).
 
 validKill(Board, Player, PFrom, PTo):-
+    checkPlayerPiece(Board, Player,PFrom),
     checkDestinyTarget(Board,Player, PTo),
     isDiagonal(PFrom,PTo),
     emptySpaces(Board,PFrom,PTo).
@@ -145,22 +177,25 @@ update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1
     getMove(point(FromX,FromY), point(ToX,ToY)),
     (validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)); 
     (nl, write('Invalid move. Try again\n\n'), getMove(point(FromX,FromY), point(ToX,ToY)))),
+    move(move(point(FromX,FromY), point(ToX,ToY)), board(B,PiecesP1,PiecesP2), board(NewB,NewPiecesP1,NewPiecesP2), Player),
+    changePlayer(Player,NewPlayer),
+    nl,
+    displayGame(NewB,NewPiecesP1,NewPiecesP2,NewPlayer).
+
+changePlayer(Player, NewPlayer):-
+    (
+        Player =:= 1 -> NewPlayer is 2 ; NewPlayer is 1
+    ).
+
+move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
+    getPiece(B,point(FromX, FromY), Piece),
+    replaceInTable(B,FromX,FromY,1,TempBoard),
+    replaceInTable(TempBoard,ToX,ToY,Piece, NewBoard),
     (
         checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 2 -> (NewPiecesP1 is (PiecesP1-1), NewPiecesP2 is PiecesP2); 
         checkDestinyTarget(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1);
         NewPiecesP1 is PiecesP1, NewPiecesP2 is PiecesP2
-    ),
-    move(move(point(FromX,FromY), point(ToX,ToY)), B, NewB),
-    (
-        Player =:= 1 -> NewPlayer is 2 ; NewPlayer is 1
-    ), nl,
-    displayGame(NewB,NewPiecesP1,NewPiecesP2,NewPlayer).
-
-
-move(move(point(FromX, FromY),point(ToX,ToY)), Board, NewBoard):-
-    getPiece(Board,point(FromX, FromY), Piece),
-    replaceInTable(Board,FromX,FromY,1,TempBoard),
-    replaceInTable(TempBoard,ToX,ToY,Piece, NewBoard).
+    ).
 
 
 same(L1,L2):-
