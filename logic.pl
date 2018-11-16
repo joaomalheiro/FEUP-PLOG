@@ -35,9 +35,6 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 start(Mode) :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B,PiecesP1,PiecesP2,Player),
-    now(A),
-    set_random(A),
-    
 
     (Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player)));
     write('ai').
