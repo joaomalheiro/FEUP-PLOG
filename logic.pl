@@ -34,10 +34,10 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 
 start(Mode) :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
-    %displayGame(B,PiecesP1,PiecesP2,Player),
-    %(Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player)));
+    displayGame(B,PiecesP1,PiecesP2,Player),
+    (Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player))).
     %write('ai').
-    aiMedium(state(board(B,PiecesP1,PiecesP2),Player)).
+    %aiMedium(state(board(B,PiecesP1,PiecesP2),Player)).
 
 elLoop(state(board(B,PiecesP1,PiecesP2),Player)):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
@@ -175,12 +175,15 @@ generateRandomNum(D,U,RandomNum):-
 
 update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
     getMove(point(FromX,FromY), point(ToX,ToY)),
-    (validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)); 
-    (nl, write('Invalid move. Try again\n\n'), getMove(point(FromX,FromY), point(ToX,ToY)))),
-    move(move(point(FromX,FromY), point(ToX,ToY)), board(B,PiecesP1,PiecesP2), board(NewB,NewPiecesP1,NewPiecesP2), Player),
-    changePlayer(Player,NewPlayer),
-    nl,
-    displayGame(NewB,NewPiecesP1,NewPiecesP2,NewPlayer).
+    (validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)),
+
+        move(move(point(FromX,FromY), point(ToX,ToY)), board(B,PiecesP1,PiecesP2), board(NewB,NewPiecesP1,NewPiecesP2), Player),
+       changePlayer(Player,NewPlayer),
+        nl,
+        displayGame(NewB,NewPiecesP1,NewPiecesP2,NewPlayer)
+    ); 
+    (nl, write('Invalid move. Try again\n\n'), update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer))).
+
 
 changePlayer(Player, NewPlayer):-
     (
