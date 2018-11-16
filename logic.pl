@@ -18,9 +18,9 @@ final_board([
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
-[1,0,1,0,1,0,1,0,1,0],
+[1,0,1,0,2,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
-[1,0,1,0,1,0,2,0,1,0],
+[1,0,1,0,1,0,1,0,1,0],
 [0,1,0,1,0,3,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
@@ -32,23 +32,43 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
     initial_board(board(B,PiecesP1,PiecesP2)),
     initial_player(Player).
 
-start(Mode) :-
+start(TypeP1, TypeP2,Level) :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B,PiecesP1,PiecesP2,Player),
-    (Mode =:= 1 -> elLoop(state(board(B,PiecesP1,PiecesP2),Player))).
-    %write('ai').
-    %aiMedium(state(board(B,PiecesP1,PiecesP2),Player)).
+    gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level).
+    %aiMedium(state(board(B,PiecesP1,PiecesP2),Player)).    
 
-elLoop(state(board(B,PiecesP1,PiecesP2),Player)):-
+gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
+    Winner is 0, 
     (
-        Winner =:= 0 -> update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)) ,elLoop(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)); write('já ganhoooooou')
-    ).
+        Player =:= 1 -> Type is TypeP1;
+        Player =:= 2 -> Type is TypeP2
+    ),
+    update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), Type, Level) ,
+    gameLoop(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer),TypeP1, TypeP2, Level).
+
+gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2,Level):-
+    game_over(board(B,PiecesP1,PiecesP2),Winner),
+    Winner is 1,
+    printLine,
+    write(' BLUE PLAYER WON!'),
+    printLine.
+
+gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2,Level):-
+    game_over(board(B,PiecesP1,PiecesP2),Winner),
+    Winner is 2,
+    printLine,
+    write(' RED PLAYER WON!'),
+    printLine.    
 
 game_over(board(B,PiecesP1,PiecesP2), Winner):-
-    (
-        PiecesP1 =:= 0 -> Winner is 2 ; PiecesP2 =:= 0 -> Winner is 1 ; Winner is 0 
-    ).
+    PiecesP1 is 0, Winner is 2.
+
+game_over(board(B,PiecesP1,PiecesP2), Winner):-
+    PiecesP2 is 0, Winner is 1.
+
+game_over(board(B,PiecesP1,PiecesP2), 0).
 
 aiMedium(state(board(B,PiecesP1,PiecesP2),Player)):-
     findall(Value-FromX-FromY-ToX-ToY,(validPlay(B, Player, point(FromX,FromY),point(ToX,ToY)),
@@ -72,9 +92,12 @@ value(state(board(Board,PiecesP1,PiecesP2),Player),Value):-
     Value is AuxValueKills - AuxValueKillable.
 
 valueKills(PiecesP1, PiecesP2, Player, Value):-
-    (
-        Player =:= 1 -> Value is PiecesP2*(PiecesP2-PiecesP1); Value is PiecesP1*(PiecesP1-PiecesP2)
-    ).
+    Player is 1, 
+    Value is PiecesP2*(PiecesP2-PiecesP1).
+
+valueKills(PiecesP1, PiecesP2, Player, Value):-  
+    Player is 2,
+    Value is PiecesP1*(PiecesP1-PiecesP2).
 
 valueKillable(Board, Player, Value):-
     findall([FromX,FromY,ToX,ToY],validKill(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListKills),
@@ -92,7 +115,6 @@ validPlay(Board, Player, PFrom, PTo):-
     validEngage(Board, Player, PFrom,PTo).
 
 validKill(Board, Player, PFrom, PTo):-
-    checkPlayerPiece(Board, Player,PFrom),
     checkDestinyTarget(Board,Player, PTo),
     isDiagonal(PFrom,PTo),
     emptySpaces(Board,PFrom,PTo).
@@ -126,12 +148,12 @@ isDiagonal(point(FromX,FromY), point(ToX,ToY)):-
     abs(ToX - FromX) =:= abs(ToY - FromY).
 
 checkPlayerPiece(Board,Player,point(FromX,FromY)):-
-    ((
-        Player =:= 1 -> getPiece(Board, point(FromX,FromY), PlayerPiece) , PlayerPiece == 3
-    );
-    (
-        Player =:= 2 -> getPiece(Board, point(FromX,FromY), PlayerPiece) , PlayerPiece == 2
-    )).
+    Player is 1,
+    getPiece(Board, point(FromX,FromY), PlayerPiece) , PlayerPiece == 3.
+
+checkPlayerPiece(Board,Player,point(FromX,FromY)):-
+    Player is 2,
+    getPiece(Board, point(FromX,FromY), PlayerPiece) , PlayerPiece == 2.
 
 checkDestinyEmpty(Board, point(ToX,ToY)):-
     getPiece(Board,point(ToX,ToY),Piece),
@@ -152,17 +174,18 @@ getPiece(Board, point(Row, Column), Value):-
 betweenBoard(point(X, Y)):-
         between(0, 9, X) , between(0,9,Y).
 
-choose_move(B,Player, Level, Move):-
-    (
-        Level =:= 1 -> aiEasy(B, Player,Move)
-    ).
+choose_move(B,Player, Level, move(point(FromX,FromY),point(ToX,ToY))):-
+    Level is 1, aiEasy(B, Player,move(point(FromX,FromY),point(ToX,ToY))).
+
+choose_move(B,Player, Level, move(point(FromX,FromY),point(ToX,ToY))):-
+    Level is 2, aiEasy(B, Player,move(point(FromX,FromY),point(ToX,ToY))). 
     
-aiEasy(B, Player, Move):-
+aiEasy(B, Player, move(point(FromX,FromY),point(ToX,ToY))):-
     valid_moves(B, Player, ListMoves),
     length(ListMoves, _ListSize),
     generateRandomNum(0,_ListSize,RandomNum),
     nth0(RandomNum, ListMoves, Movement),
-    listToMove(Movement,Move).
+    listToMove(Movement,move(point(FromX,FromY),point(ToX,ToY))).
 
 listToMove(A, move(point(FromX,FromY),point(ToX,ToY))):-
     nth0(0,A,FromX),
@@ -173,16 +196,30 @@ listToMove(A, move(point(FromX,FromY),point(ToX,ToY))):-
 generateRandomNum(D,U,RandomNum):-
     random(D, U, RandomNum).
 
-update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer)):-
-    getMove(point(FromX,FromY), point(ToX,ToY)),
-    (validPlay(B, Player, point(FromX,FromY), point(ToX,ToY)),
+update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), TypePlayer, Level):-
+    getMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY),TypePlayer, Level),
+    move(move(point(FromX,FromY), point(ToX,ToY)), board(B,PiecesP1,PiecesP2), board(NewB,NewPiecesP1,NewPiecesP2), Player),
+    changePlayer(Player,NewPlayer),
+    nl,
+    displayGame(NewB,NewPiecesP1,NewPiecesP2,NewPlayer). 
 
-        move(move(point(FromX,FromY), point(ToX,ToY)), board(B,PiecesP1,PiecesP2), board(NewB,NewPiecesP1,NewPiecesP2), Player),
-       changePlayer(Player,NewPlayer),
-        nl,
-        displayGame(NewB,NewPiecesP1,NewPiecesP2,NewPlayer)
-    ); 
-    (nl, write('Invalid move. Try again\n\n'), update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer))).
+getMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY),TypePlayer,Level):-
+    TypePlayer is 1,
+    choose_move(B,Player, Level, move(point(FromX,FromY),point(ToX,ToY))),
+    write('\n Bot made move: '),
+    write(point(FromX,FromY)),
+    write(' -> '),
+    write(point(ToX,ToY)), nl. 
+
+getMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY),TypePlayer,Level):-
+    TypePlayer is 0,
+    getUserMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)).       
+
+getUserMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)):-
+    askForMove(point(FromX,FromY), point(ToX,ToY)),
+    validPlay(B, Player, point(FromX,FromY), point(ToX,ToY));
+    (write('\nInvalid move. Try again\n\n'), 
+    getUserMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY))).
 
 
 changePlayer(Player, NewPlayer):-

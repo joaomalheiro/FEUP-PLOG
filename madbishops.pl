@@ -7,3 +7,5 @@
 :- use_module(library(system)).
 
 play:-mainMenu.
+
+%consult('madbishops.pl').
