@@ -35,18 +35,8 @@ initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
 start(TypeP1, TypeP2,Level) :-
     initial_state(state(board(B,PiecesP1,PiecesP2),Player)),
     displayGame(B,PiecesP1,PiecesP2,Player),
-    gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level).
-    %aiMedium(state(board(B,PiecesP1,PiecesP2),Player)).    
+    gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level).  
 
-gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level):-
-    game_over(board(B,PiecesP1,PiecesP2),Winner),
-    Winner is 0, 
-    (
-        Player =:= 1 -> Type is TypeP1;
-        Player =:= 2 -> Type is TypeP2
-    ),
-    update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), Type, Level) ,
-    gameLoop(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer),TypeP1, TypeP2, Level).
 
 gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2,Level):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
@@ -62,22 +52,29 @@ gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2,Level):-
     write(' RED PLAYER WON!'),
     printLine.    
 
+gameLoop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level):-
+    game_over(board(B,PiecesP1,PiecesP2),Winner),
+    (
+        Player =:= 1 -> Type is TypeP1;
+        Player =:= 2 -> Type is TypeP2
+    ),
+    update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), Type, Level) ,
+    gameLoop(state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer),TypeP1, TypeP2, Level).
+
 game_over(board(B,PiecesP1,PiecesP2), Winner):-
     PiecesP1 is 0, Winner is 2.
 
 game_over(board(B,PiecesP1,PiecesP2), Winner):-
-    PiecesP2 is 0, Winner is 1.
-
+   PiecesP2 is 0, Winner is 1.
+    
 game_over(board(B,PiecesP1,PiecesP2), 0).
 
-aiMedium(state(board(B,PiecesP1,PiecesP2),Player)):-
+aiMedium(state(board(B,PiecesP1,PiecesP2),Player),Move):-
     findall(Value-FromX-FromY-ToX-ToY,(validPlay(B, Player, point(FromX,FromY),point(ToX,ToY)),
     move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player),
     changePlayer(Player,NewPlayer),
     value(state(board(NewBoard,NewPiecesP1,NewPiecesP2),NewPlayer),Value)),ListValues),
-    write(ListValues),
-    choose_best_move(ListValues, BestMove,-100,move(0,0,0,0)),nl,nl,
-    write(BestMove).
+    choose_best_move(ListValues, Move,-100,move(0,0,0,0)).
 
 choose_best_move([],BestMove, _CurrBestValue, BestMove).
 choose_best_move([ActualValue-FromX-FromY-ToX-ToY|T],BestMove, CurrBestValue, CurrBestMove):-
@@ -100,7 +97,7 @@ valueKills(PiecesP1, PiecesP2, Player, Value):-
     Value is PiecesP1*(PiecesP1-PiecesP2).
 
 valueKillable(Board, Player, Value):-
-    findall([FromX,FromY,ToX,ToY],validKill(Board,Player,point(FromX,FromY),point(ToX,ToY)),ListKills),
+    findall([FromX,FromY,ToX,ToY],(checkPlayerPiece(Board, Player,point(FromX,FromY)),validKill(Board,Player,point(FromX,FromY),point(ToX,ToY))),ListKills),
     length(ListKills, ListSize),
     Value is ListSize.
 
@@ -174,11 +171,11 @@ getPiece(Board, point(Row, Column), Value):-
 betweenBoard(point(X, Y)):-
         between(0, 9, X) , between(0,9,Y).
 
-choose_move(B,Player, Level, move(point(FromX,FromY),point(ToX,ToY))):-
+choose_move(state(board(B, PiecesP1, PiecesP2),Player), Level, move(point(FromX,FromY),point(ToX,ToY))):-
     Level is 1, aiEasy(B, Player,move(point(FromX,FromY),point(ToX,ToY))).
 
-choose_move(B,Player, Level, move(point(FromX,FromY),point(ToX,ToY))):-
-    Level is 2, aiEasy(B, Player,move(point(FromX,FromY),point(ToX,ToY))). 
+choose_move(state(board(B, PiecesP1, PiecesP2),Player), Level, move(point(FromX,FromY),point(ToX,ToY))):-
+    Level is 2, aiMedium(state(board(B,PiecesP1,PiecesP2),Player),move(FromX,FromY,ToX,ToY)).
     
 aiEasy(B, Player, move(point(FromX,FromY),point(ToX,ToY))):-
     valid_moves(B, Player, ListMoves),
@@ -205,7 +202,7 @@ update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1
 
 getMove(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY),TypePlayer,Level):-
     TypePlayer is 1,
-    choose_move(B,Player, Level, move(point(FromX,FromY),point(ToX,ToY))),
+    choose_move(state(board(B, PiecesP1, PiecesP2),Player), Level, move(point(FromX,FromY),point(ToX,ToY))),
     write('\n Bot made move: '),
     write(point(FromX,FromY)),
     write(' -> '),
