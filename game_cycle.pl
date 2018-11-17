@@ -21,11 +21,11 @@ final_board([
 [1,0,1,0,2,0,1,0,1,0],
 [0,1,0,1,0,1,0,1,0,1],
 [1,0,1,0,1,0,1,0,1,0],
-[0,1,0,1,0,3,0,1,0,1],
+[0,1,0,1,0,3,0,3,0,1],
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
+initial_board(board(B, PiecesP1, PiecesP2)) :- final_board(B), PiecesP1 is 25, PiecesP2 is 25.
 initial_player(2) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-

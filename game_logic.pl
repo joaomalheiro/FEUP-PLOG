@@ -15,6 +15,8 @@ valid_kill(B, Player, PFrom, PTo):-
 
 valid_engage(B, Player, PFrom, PTo):-
     check_player_piece(B,Player,PFrom),
+    findall([PFrom], valid_kill(B,Player,PFrom, point(_X,_Y)), ListOfKills),
+    length(ListOfKills, 0),
     check_destiny_empty(B,PTo),
     is_diagonal(PFrom,PTo),
     empty_spaces(B,PFrom,PTo),
