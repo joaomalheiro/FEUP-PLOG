@@ -1,6 +1,6 @@
-displayGame([],Pieces1,Pieces2, P).
-displayGame(T,Pieces1,Pieces2,P) :-
-printLine, nl,
+display_game([],Pieces1,Pieces2, P).
+display_game(T,Pieces1,Pieces2,P) :-
+print_line, nl,
   write('PLAYER TURN: '),
   ((
     P =:= 1 -> write('BLUE')
@@ -12,41 +12,41 @@ printLine, nl,
   write('RED BISHOPS: '), write(Pieces2),
   write('  |  BLUE BISHOPS: '), write(Pieces1),nl,nl,
   write('    0   1   2   3   4   5   6   7   8   9'),
-  printSeparation,
+  print_seperation,
   nl,
-  tablePrint(T,-1).
+  table_print(T,-1).
 
 
-printSeparation :- 
+print_seperation :- 
   nl,
   write('  |---|---|---|---|---|---|---|---|---|---|').
 
-tablePrint([], _X).
-tablePrint([L|T],X) :-
+table_print([], _X).
+table_print([L|T],X) :-
   C is X+1,
   write(C),
-  printList(L),
+  print_list(L),
   write(' |'),
-  printSeparation,
+  print_seperation,
   nl,
-  tablePrint(T,C).
+  table_print(T,C).
 
-printList([]).
-printList([C|L]) :-
+print_list([]).
+print_list([C|L]) :-
   write(' | '),
-  printCell(C),
-  printList(L).
+  print_cell(C),
+  print_list(L).
 
-printCell(X) :-
-  printSymbol(X,S),
+print_cell(X) :-
+  print_symbol(X,S),
   write(S).
 
-printLine :-
+print_line :-
 nl,
 write('-------------------------------------------'),
 nl.  
 
-printSymbol(0,S) :- S='.'.
-printSymbol(1,S) :- S=' '.
-printSymbol(2,S) :- S='V'.
-printSymbol(3,S) :- S='B'.
+print_symbol(0,S) :- S='.'.
+print_symbol(1,S) :- S=' '.
+print_symbol(2,S) :- S='V'.
+print_symbol(3,S) :- S='B'.
