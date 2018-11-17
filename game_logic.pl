@@ -77,12 +77,6 @@ list_to_move(A, move(point(FromX,FromY),point(ToX,ToY))):-
 generate_random_num(D,U,RandomNum):-
     random(D, U, RandomNum).
 
-change_player(Player, NewPlayer):-
-    Player is 1, NewPlayer is 2.
-    
-change_player(Player, NewPlayer):-
-    Player is 2, NewPlayer is 1.
-
 same(L1,L2):-
     append(L1,[],L2).        
         

@@ -110,3 +110,8 @@ move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(N
         check_destiny_target(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1);
         NewPiecesP1 is PiecesP1, NewPiecesP2 is PiecesP2
     ).
+
+change_player(Player, NewPlayer):-
+    Player is 1, NewPlayer is 2.
+change_player(Player, NewPlayer):-
+    Player is 2, NewPlayer is 1.
