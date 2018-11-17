@@ -44,11 +44,12 @@ managemain_menuInput(Input):-
   Input =:= 4 -> true.
 
 get_input(Input,Low,High):-
-  read(Input),
+  catch(read(Input),Err,fail),
   test_input(Input,Low,High); (write('\nInvalid Input. Try again: \n'), get_input(Input,Low,High)).
 
 test_input(Input,Low,High):-
-  integer(Input)->between(Low,High,Input).  
+  integer(Input),
+  between(Low,High,Input).  
 
 ask_for_move(point(FromX,FromY), point(ToX,ToY)):-
 
