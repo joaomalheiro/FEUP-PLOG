@@ -8,6 +8,6 @@
 :- use_module(library(random)).
 :- use_module(library(system)).
 
-play:-mainMenu.
+play:-main_menu.
 
 %consult('madbishops.pl').

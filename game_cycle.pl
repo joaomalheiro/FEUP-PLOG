@@ -41,16 +41,16 @@ start(TypeP1, TypeP2,Level) :-
 game_loop(state(board(B,PiecesP1,PiecesP2), _Player), _TypeP1, _TypeP2,_Level):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
     Winner is 1,
-    printLine,
+    print_line,
     write(' BLUE PLAYER WON!'),
-    printLine.
+    print_line.
 
 game_loop(state(board(B,PiecesP1,PiecesP2), _Player), _TypeP1, _TypeP2, _Level):-
     game_over(board(B,PiecesP1,PiecesP2),Winner),
     Winner is 2,
-    printLine,
+    print_line,
     write(' RED PLAYER WON!'),
-    printLine.    
+    print_line.    
 
 game_loop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level):-
     game_over(board(B,PiecesP1,PiecesP2),_Winner),
@@ -97,9 +97,9 @@ get_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(To
 
 get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)):-
     ask_for_move(point(FromX,FromY), point(ToX,ToY)),
-    valid_play(B, Player, point(FromX,FromY), point(ToX,ToY));
+    (( valid_play(B, Player, point(FromX,FromY), point(ToX,ToY)), write('finished valid'));
     (write('\nInvalid move. Try again\n\n'), 
-    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY))).
+    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(NFromX,NFromY), point(NToX,NToY)))).
 
 move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
     get_piece(B,point(FromX, FromY), Piece),

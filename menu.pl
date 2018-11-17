@@ -43,31 +43,27 @@ managemain_menuInput(Input):-
   Input =:= 3 -> ai_menu(1,1);
   Input =:= 4 -> true.
 
-get_input(Input,_Low,_High):-
-  read(Input).
-  %test_input(Input,Low,High); (write('\nInvalid Input. Try again: \n'), get_input(Input,Low,High)).
+get_input(Input,Low,High):-
+  read(Input),
+  test_input(Input,Low,High); (write('\nInvalid Input. Try again: \n'), get_input(Input,Low,High)).
 
 test_input(Input,Low,High):-
-  between(Low,High,Input),
-  integer(Input).  
+  integer(Input)->between(Low,High,Input).  
 
-  ask_for_move(point(FromX,FromY), point(ToX,ToY)):-
-    write('From Row: '),
-    read(Input1),
-    %get_input(Input1,0,9),
-    FromX is Input1,
-    write('From Col: '),
-    read(Input2),
-   %get_input(Input2,0,9),
-    FromY is Input2,
-    write('To Row: '),
-    read(Input3),
-    %get_input(Input3,0,9),
-    ToX is Input3,
-    write('To Col: '),
-    read(Input4),
-    %get_input(Input4,0,9),
-    ToY is Input4.
+ask_for_move(point(FromX,FromY), point(ToX,ToY)):-
+
+  write('From Row: '),
+  get_input(Input1,0,9),
+  FromX is Input1,
+  write('From Col: '),
+  get_input(Input2,0,9),
+  FromY is Input2,
+  write('To Row: '),
+  get_input(Input3,0,9),
+  ToX is Input3,
+  write('To Col: '),
+  get_input(Input4,0,9),
+  ToY is Input4.
 
 
 
