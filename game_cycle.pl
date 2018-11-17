@@ -25,7 +25,7 @@ final_board([
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- final_board(B), PiecesP1 is 25, PiecesP2 is 25.
+initial_board(board(B, PiecesP1, PiecesP2)) :- final_board(B), PiecesP1 is 2, PiecesP2 is 1.
 initial_player(2) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
@@ -97,9 +97,9 @@ get_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(To
 
 get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)):-
     ask_for_move(point(FromX,FromY), point(ToX,ToY)),
-    valid_play(B, Player, point(FromX,FromY), point(ToX,ToY));
+    (valid_play(B, Player, point(FromX,FromY), point(ToX,ToY));
     (write('\nInvalid move. Try again\n\n'), 
-    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY))).
+    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(_NFromX,_NFromY), point(_NToX,_NToY)))).
 
 move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
     get_piece(B,point(FromX, FromY), Piece),
