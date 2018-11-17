@@ -86,6 +86,3 @@ ask_for_move(point(FromX,FromY), point(ToX,ToY)):-
   write('To Col: '),
   get_input(Input4,0,9),
   ToY is Input4.
-
-
-

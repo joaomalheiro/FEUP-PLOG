@@ -1,6 +1,15 @@
+% Returns all valid moves
+% B - board
+% Player - current player
+% ListMoves - list returned of all valid moves
 valid_moves(B, Player, ListMoves):-
     findall([FromX,FromY,ToX,ToY],valid_play(B,Player,point(FromX,FromY),point(ToX,ToY)),ListMoves).
 
+% Checks if valid play
+% B - board
+% Player - current player
+% PFrom - coordinates of piece to be moved
+% PTo - coordinates of desired position
 valid_play(B, Player, PFrom, PTo):-
     between_board(PFrom),
     between_board(PTo),
@@ -8,11 +17,21 @@ valid_play(B, Player, PFrom, PTo):-
     valid_kill(B, Player,PFrom,PTo);
     valid_engage(B, Player, PFrom,PTo).
 
+% Checks if valid kill
+% B - board
+% Player - current player
+% PFrom - coordinates of piece to be moved
+% PTo - coordinates of desired position
 valid_kill(B, Player, PFrom, PTo):-
     check_destiny_target(B,Player, PTo),
     is_diagonal(PFrom,PTo),
     empty_spaces(B,PFrom,PTo).
 
+% Checks if valid engage
+% B - board
+% Player - current player
+% PFrom - coordinates of piece to be moved
+% PTo - coordinates of desired position
 valid_engage(B, Player, PFrom, PTo):-
     check_player_piece(B,Player,PFrom),
     findall([PFrom], valid_kill(B,Player,PFrom, point(_X,_Y)), ListOfKills),
@@ -23,7 +42,6 @@ valid_engage(B, Player, PFrom, PTo):-
     valid_kill(B,Player,PTo,point(_X,_Y)).
 
 %HELPER FUNCTIONS
-
 empty_spaces(B, point(FromX,FromY), point(ToX,ToY)):-
     DirX is sign(ToX - FromX),
     DirY is sign(ToY - FromY),
