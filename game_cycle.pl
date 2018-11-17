@@ -123,7 +123,9 @@ get_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(To
     write('\n Bot made move: '),
     write(point(FromX,FromY)),
     write(' -> '),
-    write(point(ToX,ToY)), nl. 
+    write(point(ToX,ToY)), nl, 
+    write(' Type enter:'),
+    get_code(_Input). 
 
 get_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY),TypePlayer,_Level):-
     TypePlayer is 0,
