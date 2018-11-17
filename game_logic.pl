@@ -41,8 +41,15 @@ valid_engage(B, Player, PFrom, PTo):-
     empty_spaces(B,PFrom,PTo),
     valid_kill(B,Player,PTo,point(_X,_Y)).
 
+
 %HELPER FUNCTIONS
-%
+
+% Checks if diagonal is empty
+% B - board
+% FromX - Row of piece to move
+% FromY - Collumn of piece to move
+% ToX - Row of desired position
+% ToY - Collumn of desired position
 empty_spaces(B, point(FromX,FromY), point(ToX,ToY)):-
     DirX is sign(ToX - FromX),
     DirY is sign(ToY - FromY),
@@ -51,7 +58,12 @@ empty_spaces(B, point(FromX,FromY), point(ToX,ToY)):-
     empty_spaces_aux(B, point(X2, Y2), point(ToX,ToY), DirX, DirY).
 
 
-%
+% Checks if there if spaces in diagonal are empty
+% B - board
+% FromX - Row of piece to move
+% FromY - Collumn of piece to move
+% ToX - Row of desired position
+% ToY - Collumn of desired position
 empty_spaces_aux(_B, point(X,Y), point(X, Y), _DirX, _DirY).
 empty_spaces_aux(B,point(FromX,FromY), point(ToX,ToY), DirX, DirY):-
     X2 is FromX+DirX,
@@ -61,7 +73,13 @@ empty_spaces_aux(B,point(FromX,FromY), point(ToX,ToY), DirX, DirY):-
     empty_spaces_aux(B,point(X2,Y2),point(ToX,ToY),DirX,DirY).
 
 
-%
+% Verifies is piece in determinate coordinates belogs to current player
+% B - board
+% Player - current player
+% FromX - Row of piece to move
+% FromY - Collumn of piece to move
+% ToX - Row of desired position
+% ToY - Collumn of desired position
 check_player_piece(B,Player,point(FromX,FromY)):-
     Player is 1,
     get_piece(B, point(FromX,FromY), PlayerPiece) , PlayerPiece == 3.
@@ -99,7 +117,11 @@ get_piece(B, point(Row, Column), Value):-
 
 
 
-%
+% Transforms coordinate array into a move structure
+% FromX - Row of piece to move
+% FromY - Collumn of piece to move
+% ToX - Row of desired position
+% ToY - Collumn of desired position
 list_to_move(A, move(point(FromX,FromY),point(ToX,ToY))):-
     nth0(0,A,FromX),
     nth0(1,A,FromY),
