@@ -36,21 +36,31 @@ ai_menu(P1,P2):-
   manage_ai_input(Input,P1,P2).
 
 % Manages input from ai menu
-% Input - option selected in menu
+% _ - input
 % P1 - type of player 1 (human, bot)
 % P1 - type of player 2 (human, bot)
-manage_ai_input(Input,P1,P2):-
-  Input =:= 1 -> start(P1,P2,1);
-  Input =:= 2 -> start(P1,P2,2);
-  Input =:= 3 -> true.
+manage_ai_input(1,P1,P2):-
+  start(P1,P2,1).
+
+manage_ai_input(2,P1,P2):-
+  start(P1,P2,2).
+
+manage_ai_input(3,_P1,_P2):-
+  true.
 
 % Manages input from main menu
-% Input - option selected in menu
-managemain_menuInput(Input):-
-  Input =:= 1 -> start(0,0,0);
-  Input =:= 2 -> ai_menu(0,1);
-  Input =:= 3 -> ai_menu(1,1);
-  Input =:= 4 -> true.
+% _ - option selected in menu
+managemain_menuInput(1):-
+  start(0,0,0).
+ 
+managemain_menuInput(2):-
+  ai_menu(0,1).
+
+managemain_menuInput(3):-
+  ai_menu(1,1).
+
+managemain_menuInput(4):-
+  true.
 
 % Collects input 
 % Input - input to be read
@@ -58,7 +68,11 @@ managemain_menuInput(Input):-
 % High - higher option limit
 get_input(Input,Low,High):-
   catch(read(Input),_Err,fail),
-  test_input(Input,Low,High); (write('\nInvalid Input. Try again: \n'), get_input(Input,Low,High)).
+  test_input(Input,Low,High).
+
+get_input(Input,Low,High):-
+  write('\nInvalid Input. Try again: \n'), 
+  get_input(Input,Low,High).
 
 % Verifies if input is valid
 % Input - input to be read

@@ -2,16 +2,12 @@
 % T - Board
 % Pieces1 - number os player 1's pieces 
 % Pieces2 - number os player 2's pieces 
+% P - player
 display_game([],_PiecesP1,_Pieces2, _P).
 display_game(T,Pieces1,Pieces2,P) :-
 print_line, nl,
   write('PLAYER TURN: '),
-  ((
-    P =:= 1 -> write('BLUE')
-  );
-  (
-    P =:= 2 -> write('RED')
-  )),
+  printPlayer(P),
   nl,nl,
   write('RED BISHOPS: '), write(Pieces2),
   write('  |  BLUE BISHOPS: '), write(Pieces1),nl,nl,
@@ -19,6 +15,14 @@ print_line, nl,
   print_seperation,
   nl,
   table_print(T,-1).
+
+
+% Prints player(P) color
+printPlayer(1):-
+  write('BLUE').
+
+printPlayer(2):-
+  write('RED').
 
 % Prints a seperation line separation
 print_seperation :- 
