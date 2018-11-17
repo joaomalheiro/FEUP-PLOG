@@ -8,6 +8,7 @@
 :- use_module(library(random)).
 :- use_module(library(system)).
 
+% starts game
 play:-main_menu.
 
-%consult('madbishops.pl').
+% run consult('madbishops.pl').

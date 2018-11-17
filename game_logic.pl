@@ -22,6 +22,8 @@ valid_engage(B, Player, PFrom, PTo):-
     empty_spaces(B,PFrom,PTo),
     valid_kill(B,Player,PTo,point(_X,_Y)).
 
+%HELPER FUNCTIONS
+
 empty_spaces(B, point(FromX,FromY), point(ToX,ToY)):-
     DirX is sign(ToX - FromX),
     DirY is sign(ToY - FromY),
@@ -37,11 +39,6 @@ empty_spaces_aux(B,point(FromX,FromY), point(ToX,ToY), DirX, DirY):-
     is_empty_piece(Piece),
     empty_spaces_aux(B,point(X2,Y2),point(ToX,ToY),DirX,DirY).
 
-is_empty_piece(Piece):-
-    Piece =:= 1.
-
-is_diagonal(point(FromX,FromY), point(ToX,ToY)):-
-    abs(ToX - FromX) =:= abs(ToY - FromY).
 
 check_player_piece(B,Player,point(FromX,FromY)):-
     Player is 1,
@@ -67,20 +64,35 @@ get_piece(B, point(Row, Column), Value):-
     nth0(Row, B, HelpRow),
     nth0(Column, HelpRow, Value).
 
-between_board(point(X, Y)):-
-        between(0, 9, X) , between(0,9,Y).
 
 list_to_move(A, move(point(FromX,FromY),point(ToX,ToY))):-
     nth0(0,A,FromX),
     nth0(1,A,FromY),
     nth0(2,A,ToX), 
     nth0(3,A,ToY). 
-    
+
+is_empty_piece(Piece):-
+    Piece =:= 1.
+
+is_diagonal(point(FromX,FromY), point(ToX,ToY)):-
+    abs(ToX - FromX) =:= abs(ToY - FromY).
+
+between_board(point(X, Y)):-
+        between(0, 9, X) , between(0,9,Y). 
+
 generate_random_num(D,U,RandomNum):-
     random(D, U, RandomNum).
 
 same(L1,L2):-
-    append(L1,[],L2).        
+    append(L1,[],L2).  
+
+get_type(Player,Type, TypeP1, _TypeP2):-
+    Player is 1,
+    Type = TypeP1.
+
+get_type(Player,Type, _TypeP1, TypeP2):-
+    Player is 2,
+    Type = TypeP2.             
         
 replace_in_line([_|T], 0, V, [V|T]).
 replace_in_line([H|T], Y, V, [H|R]) :-

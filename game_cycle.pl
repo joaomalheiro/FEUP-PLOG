@@ -25,7 +25,7 @@ final_board([
 [1,0,1,0,1,0,1,0,1,0]
 ]) :- !.
 
-initial_board(board(B, PiecesP1, PiecesP2)) :- final_board(B), PiecesP1 is 2, PiecesP2 is 1.
+initial_board(board(B, PiecesP1, PiecesP2)) :- starting_board(B), PiecesP1 is 25, PiecesP2 is 25.
 initial_player(2) :- !.
 
 initial_state(state(board(B,PiecesP1,PiecesP2), Player)) :-
@@ -52,12 +52,10 @@ game_loop(state(board(B,PiecesP1,PiecesP2), _Player), _TypeP1, _TypeP2, _Level):
     write(' RED PLAYER WON!'),
     print_line.    
 
+
 game_loop(state(board(B,PiecesP1,PiecesP2),Player), TypeP1, TypeP2, Level):-
     game_over(board(B,PiecesP1,PiecesP2),_Winner),
-    (
-        Player =:= 1 -> Type is TypeP1;
-        Player =:= 2 -> Type is TypeP2
-    ),
+    get_type(Player,Type,TypeP1, TypeP2),
     update(state(board(B, PiecesP1, PiecesP2),Player), state(board(NewB, NewPiecesP1, NewPiecesP2), NewPlayer), Type, Level),
     nl,
     display_game(NewB,NewPiecesP1,NewPiecesP2,NewPlayer),
@@ -101,15 +99,32 @@ get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), poi
     (write('\nInvalid move. Try again\n\n'), 
     get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(_NFromX,_NFromY), point(_NToX,_NToY)))).
 
+
+
 move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
     get_piece(B,point(FromX, FromY), Piece),
     replace_in_table(B,FromX,FromY,1,TempBoard),
     replace_in_table(TempBoard,ToX,ToY,Piece, NewBoard),
-    (
-        check_destiny_target(B,Player,point(ToX,ToY)), Player =:= 2 -> (NewPiecesP1 is (PiecesP1-1), NewPiecesP2 is PiecesP2); 
-        check_destiny_target(B,Player,point(ToX,ToY)), Player =:= 1 -> (NewPiecesP2 is (PiecesP2-1), NewPiecesP1 is PiecesP1);
-        NewPiecesP1 is PiecesP1, NewPiecesP2 is PiecesP2
-    ).
+    check_destiny_target(B,Player,point(ToX,ToY)), 
+    Player is 2,
+    NewPiecesP1 is (PiecesP1-1), 
+    NewPiecesP2 is PiecesP2.
+
+move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
+    get_piece(B,point(FromX, FromY), Piece),
+    replace_in_table(B,FromX,FromY,1,TempBoard),
+    replace_in_table(TempBoard,ToX,ToY,Piece, NewBoard),
+    check_destiny_target(B,Player,point(ToX,ToY)), 
+    Player is 1,
+    NewPiecesP2 is PiecesP2-1, 
+    NewPiecesP1 is PiecesP1.
+
+move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),_Player):-
+    get_piece(B,point(FromX, FromY), Piece),
+    replace_in_table(B,FromX,FromY,1,TempBoard),
+    replace_in_table(TempBoard,ToX,ToY,Piece, NewBoard),
+    NewPiecesP1 is PiecesP1, NewPiecesP2 is PiecesP2.
+
 
 change_player(Player, NewPlayer):-
     Player is 1, NewPlayer is 2.
