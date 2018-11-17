@@ -1,4 +1,4 @@
-display_game([],Pieces1,Pieces2, P).
+display_game([],_PiecesP1,_Pieces2, _P).
 display_game(T,Pieces1,Pieces2,P) :-
 print_line, nl,
   write('PLAYER TURN: '),

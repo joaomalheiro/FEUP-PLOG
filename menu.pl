@@ -43,7 +43,7 @@ managemain_menuInput(Input):-
   Input =:= 3 -> ai_menu(1,1);
   Input =:= 4 -> true.
 
-get_input(Input,Low,High):-
+get_input(Input,_Low,_High):-
   read(Input).
   %test_input(Input,Low,High); (write('\nInvalid Input. Try again: \n'), get_input(Input,Low,High)).
 
