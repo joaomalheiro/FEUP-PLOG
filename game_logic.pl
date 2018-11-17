@@ -89,7 +89,7 @@ check_player_piece(B,Player,point(FromX,FromY)):-
     get_piece(B, point(FromX,FromY), PlayerPiece) , PlayerPiece == 2.
 
 
-% Check if piece in determinate coordinates is empty
+% Checks if piece in determinate coordinates is empty
 % B - board
 % ToX - Row of desired position
 % ToY - Collumn of desired position
@@ -97,6 +97,12 @@ check_destiny_empty(B, point(ToX,ToY)):-
     get_piece(B,point(ToX,ToY),Piece),
     is_empty_piece(Piece).
 
+
+% Checks if destiny piece is from opposite player
+% B - board
+% Player - current player
+% ToX - Row of desired position
+% ToY - Collumn of desired position
 check_destiny_target(B,Player, point(ToX,ToY)):-
         Player is 1,
         (get_piece(B,point(ToX,ToY), DestinyPiece) , DestinyPiece =:= 2).
