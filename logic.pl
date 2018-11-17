@@ -83,8 +83,8 @@ choose_best_move([ActualValue-FromX-FromY-ToX-ToY|T],BestMove, CurrBestValue, Cu
     
 choose_best_move([ActualValue-FromX-FromY-ToX-ToY|T], BestMove, CurrBestValue,CurrBestMove):-
     (ActualValue =:= CurrBestValue,
-    generate_random_num(0,1,Num),
-    Num =:= 0 -> choose_best_move(T, BestMove, ActualValue,move(FromX,FromY,ToX,ToY))); choose_best_move(T, BestMove, CurrBestValue, CurrBestMove).
+    generate_random_num(0,2,1),
+    choose_best_move(T, BestMove, ActualValue,move(FromX,FromY,ToX,ToY))); choose_best_move(T, BestMove, CurrBestValue, CurrBestMove).
 
 value(state(board(Board,PiecesP1,PiecesP2),Player),Value):-
     value_kills(PiecesP1, PiecesP2, Player, Value_kills),
