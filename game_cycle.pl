@@ -129,7 +129,6 @@ get_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(To
     TypePlayer is 0,
     get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)).       
 
-
 % Obtains move from user
 % B - board
 % PiecesP1 - pieces of player 1 left on board
@@ -140,10 +139,12 @@ get_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(To
 % ToX - Row of desired position
 % ToY - Collumn of desired position
 get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)):-
-    ask_for_move(point(FromX,FromY), point(ToX,ToY)),
-    (valid_play(B, Player, point(FromX,FromY), point(ToX,ToY));
-    (write('\nInvalid move. Try again\n\n'), 
-    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(_NFromX,_NFromY), point(_NToX,_NToY)))).
+
+    ask_for_move(point(AuxFromX,AuxFromY), point(AuxToX,AuxToY)),
+    ((valid_play(B, Player, point(AuxFromX,AuxFromY), point(AuxToX,AuxToY)),
+    FromX is AuxFromX, FromY is AuxFromY, ToX is AuxToX , ToY is AuxToY);
+    (write('\nInvalid move. Try again\n\n'),
+    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), point(ToX,ToY)))).
 
 
 
