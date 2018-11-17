@@ -99,7 +99,7 @@ get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(FromX,FromY), poi
     ask_for_move(point(FromX,FromY), point(ToX,ToY)),
     (( valid_play(B, Player, point(FromX,FromY), point(ToX,ToY)), write('finished valid'));
     (write('\nInvalid move. Try again\n\n'), 
-    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(NFromX,NFromY), point(NToX,NToY)))).
+    get_user_move(state(board(B, PiecesP1, PiecesP2),Player),point(_NFromX,_NFromY), point(_NToX,_NToY)))).
 
 move(move(point(FromX, FromY),point(ToX,ToY)),board(B,PiecesP1,PiecesP2),board(NewBoard,NewPiecesP1,NewPiecesP2),Player):-
     get_piece(B,point(FromX, FromY), Piece),

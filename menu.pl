@@ -44,7 +44,7 @@ managemain_menuInput(Input):-
   Input =:= 4 -> true.
 
 get_input(Input,Low,High):-
-  catch(read(Input),Err,fail),
+  catch(read(Input),_Err,fail),
   test_input(Input,Low,High); (write('\nInvalid Input. Try again: \n'), get_input(Input,Low,High)).
 
 test_input(Input,Low,High):-
