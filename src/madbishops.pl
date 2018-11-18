@@ -10,5 +10,3 @@
 
 % starts game
 play:-main_menu.
-
-% run consult('madbishops.pl').
