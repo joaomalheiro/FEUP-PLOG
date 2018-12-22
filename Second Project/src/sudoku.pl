@@ -2,6 +2,7 @@
 :- use_module(library(lists)).
 :- use_module(library(system)).
 :- use_module(library(random)).
+:- use_module(library(samsort)).
 
     % Starts game
     start:-
@@ -15,13 +16,17 @@
         labeling([value(mySelValores)], BoardLine),
         write(Board), nl,
         generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N),
+        write(LeftHints), nl, write(UpHints), nl, write(RightHints), nl, write(DownHints),
         create_board(NewBoard, 4),
         domain_board(NewBoard, 4),
+        restrict_hints(NewBoard, LeftHints, UpHints, RightHints, DownHints, N),
         restrict_lines(NewBoard), restrict_columns(NewBoard), restrict_squares(NewBoard),
-        restrict_hints(NewBoard, LeftHints, UpHints, RightHints, DownHints),
         term_variables(NewBoard, NewBoardLine),
+        findall(X,labeling([], NewBoardLine), FinalList),
         labeling([], NewBoardLine),
-        write(NewBoard).
+        length(FinalList, Size),
+        write(NewBoard),
+        write(Size).
     
     mySelValores(Var, _Rest, BB, BB1) :-
         fd_set(Var, Set),
@@ -37,6 +42,14 @@
         length(Lista, Len),
         random(0, Len, RandomIndex),
         nth0(RandomIndex, Lista, BestValue).
+    
+    
+    % Generates random number in interval D-U
+    % D - lower limit 
+    % U - higher limit 
+    % RandomNum - number generated
+    generate_random_num(D,U,RandomNum):-
+        random(D, U, RandomNum).
 
     generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N):-
         generate_hints_aux(Board, LeftHints, [], N),
@@ -56,18 +69,23 @@
     generate_hints_aux([], Hints, Hints, N).
     generate_hints_aux([H|T], Hints, HintsAux, N):-
         generate_hints_list(H, List, [], 0, N),
-        sort(List, SortedList),
+        samsort(List, SortedList),
         append(HintsAux, [SortedList], HintsAux2),
         generate_hints_aux(T, Hints, HintsAux2, N).
 
     generate_hints_list(H, List, List, N, N).
+    generate_hints_list(H, List, ListAux, Index, N):-
+        generate_random_num(1,12,1),
+        Index2 is Index + 1,
+        generate_hints_list(H, List,ListAux2, Index2, N).
+
     generate_hints_list(H, List, ListAux, Index, N):-
         nth0(Index, H, Elem),
         append(ListAux, [Elem], ListAux2),
         Index2 is Index + 1,
         generate_hints_list(H, List,ListAux2, Index2, N).
         
-
+        
     create_board(NewBoard, LineSize):-
         create_board_aux(NewBoard, [], 0, LineSize).
     create_board_aux(NewBoard, NewBoard, LineSize, LineSize).
@@ -140,16 +158,42 @@
         create_squares(Board, SquaresBoard),
         restrict_lines(SquaresBoard).
 
-    restrict_hints(Board, LeftHints, UpHints, RightHints, DownHints):-
-        [H|T] = LeftHints,
-        length(H, Size),
-        restrict_hints_aux(Board, LeftHints).
+    restrict_hints(Board, LeftHints, UpHints, RightHints, DownHints, N):-
+        restrict_hints_aux(Board, LeftHints, N),  
+        transpose(Board, TransposedBoard),
+        restrict_hints_aux(TransposedBoard, UpHints, N),
+        reverse_list_of_lists(Board, [], ReversedBoard),
+        restrict_hints_aux(ReversedBoard, RightHints, N),
+        reverse_list_of_lists(TransposedBoard, [], TRBoard),
+        restrict_hints_aux(TRBoard , DownHints, N).
 
-    restrict_hints_aux([], []).
-    restrict_hints_aux([H|T], Hint):-
-        list_to_fdset(Hint,FD),
-        H in_set FD,
-        restrict_hints_aux(T, THint).
+    restrict_hints_aux([], [], N).
+    restrict_hints_aux([H|T], [HHint|THint], N):-
+        length(HHint, 0),
+        restrict_hints_aux(T, THint, N).
+    restrict_hints_aux([H|T], [HHint|THint], N):-
+        restrict_hints_aux2(H, HHint, N),
+        restrict_hints_aux(T, THint, N).
+
+    restrict_hints_aux2(BoardLine, Hint, N):-
+        restrict_hint_constrain(BoardLine, Hint, N).
+        
+    restrict_hint_constrain(H, Hint, N):-
+        length(Residue,N),
+        append(Residue, _ , H),
+        add_hint_constrain(Hint, Residue).
+
+    add_hint_constrain([], _).
+    add_hint_constrain([H | T], Residue):-
+        element(_, Residue, H),
+        add_hint_constrain(T, Residue).
+
+            
+
+        
+
+        
+       
 
 
 
