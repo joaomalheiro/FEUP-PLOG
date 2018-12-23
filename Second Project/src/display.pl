@@ -16,7 +16,7 @@ table_print([L|T],Size,Ind,hints(LeftHints,RightHints)) :-
     I1 is Ind+1,
     print_vertical_hints_left(LeftHints,I1,round(sqrt(Size))),
   print_list(L),
-      print_vertical_hints_right(LeftHints,I1,round(sqrt(Size))),
+      print_vertical_hints_right(RightHints,I1,round(sqrt(Size))),
 
   nl,
   align-right(round(sqrt(Size))+1),
@@ -51,6 +51,8 @@ print_inner_seperation(Size) :-
   S1 is Size-1,
   print_inner_seperation(S1).
 
+
+print_horizontal_hints([],_,_).
 
 print_horizontal_hints(_,Index,_):-
   Index is 0.

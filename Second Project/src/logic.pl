@@ -6,26 +6,31 @@
 :-consult('display.pl').
 
     % Starts game
-    newGame(Size):-
+    newPuzzle(BoardSize):-
         now(Seed),
         setrand(Seed),
-        create_board(Board, Size),
-        N is round(sqrt(Size)),
-        domain_board(Board,Size),
-        restrict_lines(Board), restrict_columns(Board), restrict_squares(Board),
-        term_variables(Board, BoardLine),
+        N_Hints is round(sqrt(BoardSize)),
+        
+        create_puzzle_structure(BoardSize,Board,BoardLine),
         labeling([value(mySelValores)], BoardLine),
-        generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N),
-        /*create_board(NewBoard, 4),
-        domain_board(NewBoard, 4),
-        restrict_hints(NewBoard, LeftHints, UpHints, RightHints, DownHints, N),
-        restrict_lines(NewBoard), restrict_columns(NewBoard), restrict_squares(NewBoard),
-        term_variables(NewBoard, NewBoardLine),
-        findall(X,labeling([], NewBoardLine), FinalList),
-        labeling([], NewBoardLine),
-        length(FinalList, Size),*/
-        printBoard(board(Board,hints(LeftHints,UpHints,RightHints,DownHints)),Size).
-    
+        printBoard(board(Board,hints([],[],[],[])),BoardSize),
+
+        create_puzzle_hints(Board, LeftHints, UpHints, RightHints, DownHints, N_Hints),
+        check_single_solution(BoardLine),
+        printBoard(board(Board,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
+
+    create_puzzle_structure(BoardSize,Board,BoardLine):-
+        create_board(Board, BoardSize),
+        domain_board(Board,BoardSize),
+        restrict_lines(Board), restrict_columns(Board), restrict_squares(Board),
+        term_variables(Board, BoardLine).        
+  
+
+    check_single_solution(BoardLine):-
+        findall(X,labeling([], BoardLine), FinalList),
+        length(FinalList, Size),
+        Size is 1.
+
     mySelValores(Var, _Rest, BB, BB1) :-
         fd_set(Var, Set),
         select_best_value(Set, Value),
@@ -49,40 +54,6 @@
     generate_random_num(D,U,RandomNum):-
         random(D, U, RandomNum).
 
-    generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N):-
-        generate_hints_aux(Board, LeftHints, [], N),
-        transpose(Board, TransposedBoard),
-        generate_hints_aux(TransposedBoard, UpHints, [], N),
-        reverse_list_of_lists(Board, [], ReversedBoard),
-        generate_hints_aux(ReversedBoard, RightHints, [], N),
-        reverse_list_of_lists(TransposedBoard, [], TRBoard),
-        generate_hints_aux(TRBoard , DownHints, [], N).
-
-    reverse_list_of_lists([], ReversedBoard, ReversedBoard).
-    reverse_list_of_lists([H|T], ReversedAux, ReversedBoard):-
-        reverse(H, ReversedH),
-        append(ReversedAux, [ReversedH], ReversedAux2),
-        reverse_list_of_lists(T, ReversedAux2, ReversedBoard).
-
-    generate_hints_aux([], Hints, Hints, _).
-    generate_hints_aux([H|T], Hints, HintsAux, N):-
-        generate_hints_list(H, List, [], 0, N),
-        samsort(List, SortedList),
-        append(HintsAux, [SortedList], HintsAux2),
-        generate_hints_aux(T, Hints, HintsAux2, N).
-
-    generate_hints_list(_, List, List, N, N).
-    generate_hints_list(H, _, _, Index, N):-
-        generate_random_num(1,12,1),
-        Index2 is Index + 1,
-        generate_hints_list(H, _,_, Index2, N).
-
-    generate_hints_list(H, List, ListAux, Index, N):-
-        nth0(Index, H, Elem),
-        append(ListAux, [Elem], ListAux2),
-        Index2 is Index + 1,
-        generate_hints_list(H, List,ListAux2, Index2, N).
-        
         
     create_board(NewBoard, LineSize):-
         create_board_aux(NewBoard, [], 0, LineSize).
