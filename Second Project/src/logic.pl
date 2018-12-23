@@ -41,7 +41,7 @@ initHints4(LeftHints,RightHints,TopHints,DownHints):-
         getLevelRatio(Level,BoardSize,LevelRatio),
         create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints,LevelRatio),
         (check_single_solution(NewBoardLine);create_puzzle_with_hints(BoardSize,Board,N_Hints,Level)),
-        labeling([], NewBoardLine),
+        labeling([], NewBoardLine), !,
         printBoard(board(NewBoard,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
 
     getLevelRatio(1,Size,Ratio):-
