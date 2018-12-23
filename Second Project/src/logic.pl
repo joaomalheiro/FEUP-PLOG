@@ -14,16 +14,25 @@
          N_Hints is round(sqrt(BoardSize)),
         create_puzzle_structure(BoardSize,Board,BoardLine),
         labeling([value(mySelValores)], BoardLine),
-        create_puzzle_with_hints(BoardSize,Board,N_Hints).
+        create_puzzle_with_hints(BoardSize,Board,N_Hints,Level).
 
 
-    create_puzzle_with_hints(BoardSize,Board,N_Hints):-
+    create_puzzle_with_hints(BoardSize,Board,N_Hints,Level):-
         create_puzzle_structure(BoardSize,NewBoard,NewBoardLine),
-        create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints),
-        %(check_single_solution(NewBoardLine);create_puzzle_with_hints(BoardSize,Board,N_Hints)),
+        getLevelRatio(Level,BoardSize,LevelRatio),
+        create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints,LevelRatio),
+        (check_single_solution(NewBoardLine);create_puzzle_with_hints(BoardSize,Board,N_Hints)),
         labeling([], NewBoardLine),
         printBoard(board(NewBoard,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
-      
+
+    getLevelRatio(1,Size,Ratio):-
+        Ratio is Size*2.
+
+    getLevelRatio(2,Size,Ratio):-
+        Ratio is round(Size/sqrt(Size)). 
+
+    getLevelRatio(3,Size,Ratio):-
+        Ratio is round(Size/sqrt(Size)-1).           
 
     create_puzzle_structure(BoardSize,Board,BoardLine):-
         create_board(Board, BoardSize),
@@ -34,7 +43,7 @@
 
     check_single_solution(BoardLine):-
         findall(_,labeling([], BoardLine), FinalList),
-        length(FinalList, Size),write(Size),
+        length(FinalList, Size),
         Size is 1.
 
 
