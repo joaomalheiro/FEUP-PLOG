@@ -45,3 +45,34 @@ generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N):-
         append(ListAux, [Elem], ListAux2),
         Index2 is Index + 1,
         generate_hints_list(H, List,ListAux2, Index2, N).
+
+
+    restrict_hints(Board, LeftHints, UpHints, RightHints, DownHints, N):-
+        restrict_hints_aux(Board, LeftHints, N),  
+        transpose(Board, TransposedBoard),
+        restrict_hints_aux(TransposedBoard, UpHints, N),
+        reverse_list_of_lists(Board, [], ReversedBoard),
+        restrict_hints_aux(ReversedBoard, RightHints, N),
+        reverse_list_of_lists(TransposedBoard, [], TRBoard),
+        restrict_hints_aux(TRBoard , DownHints, N).
+
+    restrict_hints_aux([], [], _).
+    restrict_hints_aux([_|T], [HHint|THint], N):-
+        length(HHint, 0),
+        restrict_hints_aux(T, THint, N).
+    restrict_hints_aux([H|T], [HHint|THint], N):-
+        restrict_hints_aux2(H, HHint, N),
+        restrict_hints_aux(T, THint, N).
+
+    restrict_hints_aux2(BoardLine, Hint, N):-
+        restrict_hint_constrain(BoardLine, Hint, N).
+        
+    restrict_hint_constrain(H, Hint, N):-
+        length(Residue,N),
+        append(Residue, _ , H),
+        add_hint_constrain(Hint, Residue).
+
+    add_hint_constrain([], _).
+    add_hint_constrain([H | T], Residue):-
+        element(_, Residue, H),
+        add_hint_constrain(T, Residue).    
