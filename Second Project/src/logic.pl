@@ -21,7 +21,6 @@
         create_puzzle_structure(BoardSize,NewBoard,NewBoardLine),
         getLevelRatio(Level,BoardSize,LevelRatio),
         create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints,LevelRatio),
-        write(LeftHints),nl,write(UpHints),nl,nl,
         (check_single_solution(NewBoardLine);create_puzzle_with_hints(BoardSize,Board,N_Hints,Level)),
         labeling([], NewBoardLine),
         printBoard(board(NewBoard,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
