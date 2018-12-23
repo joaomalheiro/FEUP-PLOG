@@ -29,7 +29,7 @@ generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N,Level):-
     generate_hints_list(H, List, ListAux, Index, N,Level):-
         generate_random_num(1,Level,1),
         Index2 is Index + 1,
-        generate_hints_list(H, List, ListAux, Index2, N,1).
+        generate_hints_list(H, List, ListAux, Index2, N,Level).
     
     
     generate_hints_list(H, List, ListAux, Index, N,Level):-

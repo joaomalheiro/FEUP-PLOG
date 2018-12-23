@@ -6,15 +6,33 @@
 :-consult('display.pl').
 :-consult('hints.pl').
 :-consult('squares.pl').
+%:-consult('statistics.pl').
+
+leftHints4([[2,3],[4],[3],[1,4]]) :- !.
+rightHints4([[4,1],[2,3],[1,4],[2]]) :- !.
+topHints4([[3,4],[1],[1,3],[2,4]]) :- !.
+downHints4([[1,2],[3,4],[4],[1,3]]) :- !.
+
+initHints4(LeftHints,RightHints,TopHints,DownHints):-
+    leftHints4(LeftHints), rightHints4(RightHints),topHints4(TopHints),downHints4(DownHints).
 
     % Starts game
-    newPuzzle(BoardSize,Level):-
+    newPuzzle(BoardSize,Level,1):-
         now(Seed),
         setrand(Seed),
-         N_Hints is round(sqrt(BoardSize)),
+        N_Hints is round(sqrt(BoardSize)),
         create_puzzle_structure(BoardSize,Board,BoardLine),
         labeling([value(mySelValores)], BoardLine),
         create_puzzle_with_hints(BoardSize,Board,N_Hints,Level).
+
+    newPuzzle(BoardSize,Level,2):-
+        N_Hints is round(sqrt(BoardSize)),
+        initHints4(LeftHints,RightHints,TopHints,DownHints),
+        create_puzzle_structure(BoardSize,NewBoard,NewBoardLine),
+        write(NewBoardLine),
+        restrict_hints(NewBoard, LeftHints,RightHints,TopHints,DownHints, N_Hints),trace,
+        labeling([], NewBoardLine),
+        printBoard(board(NewBoard,hints(LeftHints,TopHints,RightHints,DownHints)),BoardSize).
 
 
     create_puzzle_with_hints(BoardSize,Board,N_Hints,Level):-
@@ -22,6 +40,7 @@
         getLevelRatio(Level,BoardSize,LevelRatio),
         create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints,LevelRatio),
         (check_single_solution(NewBoardLine);create_puzzle_with_hints(BoardSize,Board,N_Hints,Level)),
+        write(NewBoard),
         labeling([], NewBoardLine),
         printBoard(board(NewBoard,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
 
@@ -32,7 +51,7 @@
         Ratio is round(Size*0.5). 
 
     getLevelRatio(3,Size,Ratio):-
-        Ratio is round(Size*0.2).           
+        Ratio is round(Size*0.3).           
 
     create_puzzle_structure(BoardSize,Board,BoardLine):-
         create_board(Board, BoardSize),

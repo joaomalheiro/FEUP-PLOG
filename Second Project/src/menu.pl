@@ -9,7 +9,7 @@ mainMenu:-
     write('Enter board size (Must be a square root between 4 and 9 ex.: 4):'),
     get_input(Input),
     difficultyMenu(Level),
-    newPuzzle(Input,Level).
+    newPuzzle(Input,Level,2).
 
 
 difficultyMenu(Level):-
