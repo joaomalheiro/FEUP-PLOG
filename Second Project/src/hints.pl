@@ -1,6 +1,6 @@
-create_puzzle_hints(Board, LeftHints, UpHints, RightHints, DownHints, N_Hints):-
+create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints):-
         generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N_Hints),
-        restrict_hints(Board, LeftHints, UpHints, RightHints, DownHints, N_Hints).
+        restrict_hints(NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints).
 
 
 generate_hints(Board, LeftHints, UpHints, RightHints, DownHints, N):-

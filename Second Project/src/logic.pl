@@ -4,20 +4,26 @@
 :- use_module(library(random)).
 :- use_module(library(samsort)).
 :-consult('display.pl').
+:-consult('hints.pl').
+:-consult('squares.pl').
 
     % Starts game
-    newPuzzle(BoardSize):-
+    newPuzzle(BoardSize,Level):-
         now(Seed),
         setrand(Seed),
-        N_Hints is round(sqrt(BoardSize)),
-
+         N_Hints is round(sqrt(BoardSize)),
         create_puzzle_structure(BoardSize,Board,BoardLine),
         labeling([value(mySelValores)], BoardLine),
-        printBoard(board(Board,hints([],[],[],[])),BoardSize),
+        create_puzzle_with_hints(BoardSize,Board,N_Hints).
 
-        create_puzzle_hints(Board, LeftHints, UpHints, RightHints, DownHints, N_Hints),
-        check_single_solution(BoardLine),
-        printBoard(board(Board,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
+
+    create_puzzle_with_hints(BoardSize,Board,N_Hints):-
+        create_puzzle_structure(BoardSize,NewBoard,NewBoardLine),
+        create_puzzle_hints(Board, NewBoard, LeftHints, UpHints, RightHints, DownHints, N_Hints),
+        %(check_single_solution(NewBoardLine);create_puzzle_with_hints(BoardSize,Board,N_Hints)),
+        labeling([], NewBoardLine),
+        printBoard(board(NewBoard,hints(LeftHints,UpHints,RightHints,DownHints)),BoardSize).
+      
 
     create_puzzle_structure(BoardSize,Board,BoardLine):-
         create_board(Board, BoardSize),
@@ -28,8 +34,9 @@
 
     check_single_solution(BoardLine):-
         findall(_,labeling([], BoardLine), FinalList),
-        length(FinalList, Size),
+        length(FinalList, Size),write(Size),
         Size is 1.
+
 
     mySelValores(Var, _Rest, BB, BB1) :-
         fd_set(Var, Set),
